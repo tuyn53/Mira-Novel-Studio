@@ -1,4 +1,6 @@
-// 应用基础样式：仅承载全局复位与 Element Plus 主题衔接，业务样式写在各组件内
+// 应用基础样式：全局复位 + Element Plus 变量到 --cp 令牌的桥接
+// EP 变量全部映射为 --cp 变量的引用（而非具体色值），
+// 因此明暗切换只需切换 [data-theme]/html.dark，EP 自动跟随，两套主题天然同步。
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -43,24 +45,46 @@ button {
   }
 }
 
-// Element Plus 暗色变量挂在 html.dark 上（其自带 css-vars 的选择器约定），
-// 主题切换时同时设置 data-theme（--cp 令牌）与 dark class（EP 变量），见 stores/workspace.ts
-html.dark {
-  --el-bg-color: var(--cp-bg-elevated);
-  --el-bg-color-overlay: var(--cp-bg-overlay);
-  --el-border-color: var(--cp-border);
-  --el-border-color-light: var(--cp-border-light);
-  --el-text-color-primary: var(--cp-text);
-  --el-text-color-regular: var(--cp-text-secondary);
-  --el-fill-color-blank: var(--cp-bg);
-  --el-fill-color-light: var(--cp-bg-hover);
-  color-scheme: dark;
-}
+// ---- Element Plus → --cp 令牌桥 ----
 
-// Element Plus 主色对齐宿主令牌
 :root {
   --el-color-primary: var(--cp-primary);
-  --el-color-primary-light-3: var(--cp-primary-hover);
+  --el-color-primary-light-3: color-mix(in srgb, var(--cp-primary) 82%, var(--cp-bg));
+  --el-color-primary-light-5: color-mix(in srgb, var(--cp-primary) 60%, var(--cp-bg));
+  --el-color-primary-light-7: color-mix(in srgb, var(--cp-primary) 40%, var(--cp-bg));
+  --el-color-primary-light-8: color-mix(in srgb, var(--cp-primary) 28%, var(--cp-bg));
   --el-color-primary-light-9: var(--cp-primary-lighter);
+  --el-color-primary-dark-2: var(--cp-primary-hover);
+
+  --el-color-success: var(--cp-success);
+  --el-color-warning: var(--cp-warning);
+  --el-color-danger: var(--cp-danger);
+  --el-color-error: var(--cp-danger);
+  --el-color-info: var(--cp-text-secondary);
+
+  --el-bg-color: var(--cp-bg-elevated);
+  --el-bg-color-overlay: var(--cp-bg-overlay);
+  --el-bg-color-page: var(--cp-bg);
+
+  --el-border-color: var(--cp-border);
+  --el-border-color-light: var(--cp-border-light);
+  --el-border-color-lighter: var(--cp-border-light);
+  --el-border-color-extra-light: var(--cp-border-light);
+
+  --el-text-color-primary: var(--cp-text);
+  --el-text-color-regular: var(--cp-text-secondary);
+  --el-text-color-secondary: var(--cp-text-tertiary);
+  --el-text-color-placeholder: var(--cp-text-placeholder);
+
+  --el-fill-color-blank: var(--cp-bg);
+  --el-fill-color-light: var(--cp-bg-hover);
+  --el-fill-color: var(--cp-bg-hover);
+  --el-fill-color-lighter: var(--cp-bg);
+
   --el-border-radius-base: #{$radius-md};
+}
+
+// EP 自带暗色变量挂 html.dark，这里整体让位于 --cp 桥（本文件晚于 EP css 引入，顺序已保证覆盖）
+html.dark {
+  color-scheme: dark;
 }

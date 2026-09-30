@@ -258,7 +258,7 @@ function readPrefs(): StudioPreferences {
     const raw = localStorage.getItem(PREFS_KEY)
     if (raw) return JSON.parse(raw) as StudioPreferences
   } catch { /* 内存态降级 */ }
-  return { theme: 'light' }
+  return { theme: 'system' }
 }
 
 export const mockPlatform: PlatformApi = {

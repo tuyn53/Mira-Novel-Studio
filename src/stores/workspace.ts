@@ -14,7 +14,9 @@ export const useWorkspaceStore = defineStore('workspace', () => {
   const api = getPlatformApi()
 
   // ---- 主题 ----
-  const theme = ref<ThemePreference>('light')
+  // 色板是 Studio 自有的"书卷暖色"（不随宿主主题色），但明暗状态与宿主偏好/系统外观同步：
+  // 'system' 跟随 OS，手动切换持久化到平台偏好。
+  const theme = ref<ThemePreference>('system')
   function applyTheme(pref: ThemePreference) {
     const dark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
     // data-theme：--cp 令牌（宿主约定）；html.dark：Element Plus 变量
@@ -25,6 +27,9 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     const prefs: StudioPreferences = await api.getPreferences()
     theme.value = prefs.theme
     applyTheme(prefs.theme)
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (theme.value === 'system') applyTheme('system')
+    })
   }
   async function setTheme(pref: ThemePreference) {
     theme.value = pref

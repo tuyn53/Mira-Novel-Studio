@@ -9,6 +9,7 @@
         </p>
       </div>
       <div class="actions">
+        <ThemeToggle />
         <el-button :title="t.wizard.dropNote" @click="router.push('/new')">{{ t.shelf.import }}</el-button>
         <el-button type="primary" @click="router.push('/new')">{{ t.shelf.newBook }}</el-button>
       </div>
@@ -35,6 +36,7 @@
 import { Icon } from '@iconify/vue'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import { useWorkspaceStore } from '@/stores/workspace'
 import { formatDate, formatWords } from '@/utils/format'
 
@@ -82,6 +84,7 @@ onMounted(() => void store.loadProjects())
   .actions {
     display: flex;
     gap: 8px;
+    align-items: center;
   }
 }
 

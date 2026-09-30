@@ -11,6 +11,8 @@
           <span v-if="item.key === 'review'" class="badge">M2</span>
         </router-link>
       </nav>
+      <span class="spacer" />
+      <ThemeToggle />
     </header>
 
     <div v-if="workspace.projectLoading" v-loading="true" class="wb-body" />
@@ -27,6 +29,7 @@
 import { Icon } from '@iconify/vue'
 import { computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import { zhCN } from '@/locale/zh-CN'
 import { useWorkspaceStore } from '@/stores/workspace'
 import CodexSection from './sections/CodexSection.vue'
@@ -81,6 +84,10 @@ watch(() => props.id, load)
   padding: 0 14px;
   background: var(--cp-bg-elevated);
   border-bottom: 1px solid var(--cp-border-light);
+
+  .spacer {
+    flex: 1;
+  }
 
   .tabs {
     display: flex;

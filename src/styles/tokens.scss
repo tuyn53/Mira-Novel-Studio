@@ -1,38 +1,49 @@
 // ============================================================
 // Mira Novel Studio 设计令牌（CSS 变量，运行时可切换）
-// 复制自 Mira-Harness@0.0.10 src/styles/global.scss 的令牌段。
-// 宿主令牌更新时同步本文件；出现第三个消费方时抽 @mira/design-tokens 包。
-// 暗色选择器沿用宿主约定：[data-theme='dark']；Element Plus 另需 html.dark（见 base.scss）。
+// 配色：**读书向"书卷暖色"**，源自交互原型（prototype/index.html）并经对比度校准，
+// 刻意不跟随宿主 Mira 的主题色（青色）——写作/阅读场景需要独立的纸墨气质。
+// 明暗结构沿用宿主约定：[data-theme='dark']；Element Plus 另需 html.dark（见 base.scss）。
+// 默认跟随系统外观（'system'），手动切换经平台偏好持久化。
 // ============================================================
 
 :root {
-  // 背景色
-  --cp-bg: #ffffff;
-  --cp-bg-elevated: #fafafa;
-  --cp-bg-overlay: #ffffff;
-  --cp-bg-hover: #f4f4f5;
+  // 背景色（暖纸色阶）
+  --cp-bg: #f7f6f3;
+  --cp-bg-elevated: #fffdfa;
+  --cp-bg-overlay: #fffdfa;
+  --cp-bg-hover: #efede8;
+  --cp-paper: #fdfcf9;
 
   // 文本色
-  --cp-text: #18181b;
-  --cp-text-secondary: #71717a;
-  --cp-text-tertiary: #a1a1aa;
-  --cp-text-placeholder: #d4d4d8;
+  --cp-text: #23272e;
+  --cp-text-secondary: #4c5560;
+  --cp-text-tertiary: #5d6672;
+  --cp-text-placeholder: #9aa2ad;
 
   // 边框色
-  --cp-border: #e4e4e7;
-  --cp-border-light: #f4f4f5;
+  --cp-border: #e3e0d8;
+  --cp-border-light: #eceae3;
 
-  // 主题色（宿主默认：青色）
-  --cp-primary: #06b6d4;
-  --cp-primary-hover: #0891b2;
-  --cp-primary-light: rgba(6, 182, 212, 0.1);
-  --cp-primary-lighter: rgba(6, 182, 212, 0.05);
+  // 主题色（墨蓝）
+  --cp-primary: #2f5fd0;
+  --cp-primary-hover: #2750c4;
+  --cp-primary-light: rgba(47, 95, 208, 0.1);
+  --cp-primary-lighter: #e9effc;
+  --cp-primary-contrast: #fbfcff;
 
-  // 语义色
-  --cp-success: #10b981;
-  --cp-warning: #f59e0b;
-  --cp-danger: #ef4444;
-  --cp-info: #3b82f6;
+  // 创作身份点缀色（金 / 蓝 / 玫）
+  --cp-gold: #8a5306;
+  --cp-gold-soft: #f5ead2;
+  --cp-blue: #3d6fe0;
+  --cp-pink: #c13a68;
+
+  // 语义色（对比度校准版）
+  --cp-success: #146a3e;
+  --cp-warning: #845a00;
+  --cp-danger: #b03425;
+  --cp-info: #2f5fd0;
+
+  color-scheme: light;
 
   // 小说领域补充：稿纸衬线与场景状态色
   --font-serif: #{$font-serif};
@@ -43,19 +54,36 @@
 }
 
 [data-theme='dark'] {
-  --cp-bg: #202124;
-  --cp-bg-elevated: #292a2e;
-  --cp-bg-overlay: #33343a;
-  --cp-bg-hover: #38393f;
+  // 背景色（深墨色阶）
+  --cp-bg: #16171b;
+  --cp-bg-elevated: #1e2026;
+  --cp-bg-overlay: #23252c;
+  --cp-bg-hover: #262932;
+  --cp-paper: #1a1c21;
 
-  --cp-text: #f5f5f6;
-  --cp-text-secondary: #b7b7bf;
-  --cp-text-tertiary: #92929b;
-  --cp-text-placeholder: #92929b;
+  --cp-text: #e8e6e1;
+  --cp-text-secondary: #b3b0a8;
+  --cp-text-tertiary: #8d8b84;
+  --cp-text-placeholder: #6d6f77;
 
-  --cp-border: #47484f;
-  --cp-border-light: #34353a;
+  --cp-border: #33353d;
+  --cp-border-light: #2a2c33;
 
-  --cp-primary: #22c3dd;
-  --cp-primary-hover: #38d0e8;
+  --cp-primary: #6d97f2;
+  --cp-primary-hover: #8fb0f6;
+  --cp-primary-light: rgba(109, 151, 242, 0.14);
+  --cp-primary-lighter: #253046;
+  --cp-primary-contrast: #1a1c21;
+
+  --cp-gold: #e3b341;
+  --cp-gold-soft: #33301f;
+  --cp-blue: #88a5ff;
+  --cp-pink: #ff8eb2;
+
+  --cp-success: #5ecb93;
+  --cp-warning: #e5b567;
+  --cp-danger: #ef7a68;
+  --cp-info: #6d97f2;
+
+  color-scheme: dark;
 }
