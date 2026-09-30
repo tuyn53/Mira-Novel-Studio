@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mira Novel Studio · 交互原型</title>
+<style>
+/* ============ 设计令牌 · 延续 Mira --cp 体系 ============ */
+:root{
+  --cp-bg:#f7f6f3;
+  --cp-bg-elevated:#fffdfa;
+  --cp-bg-hover:#efede8;
+  --cp-bg-overlay:#fffdfa;
+  --cp-paper:#fdfcf9;
+  --cp-text:#23272e;
+  --cp-text-secondary:#4c5560;
+  --cp-text-tertiary:#5d6672;
+  --cp-border:#e3e0d8;
+  --cp-border-light:#eceae3;
+  --cp-primary:#2f5fd0;
+  --cp-primary-light:#7ba1f0;
+  --cp-primary-lighter:#e9effc;
+  --cp-primary-contrast:#fbfcff;
+  --cp-gold:#8a5306;
+  --cp-gold-soft:#f5ead2;
+  --cp-blue:#3d6fe0;
+  --cp-pink:#c13a68;
+  --cp-danger:#b03425;
+  --cp-danger-soft:#fbe9e6;
+  --cp-success:#146a3e;
+  --cp-success-soft:#e2f3ea;
+  --cp-warning:#845a00;
+  --cp-warning-soft:#faf0d4;
+  --radius-sm:6px; --radius-md:10px; --radius-lg:14px;
+  --shadow-sm:0 1px 2px rgba(35,32,24,.06),0 2px 8px rgba(35,32,24,.05);
+  --shadow-md:0 2px 4px rgba(35,32,24,.06),0 10px 28px rgba(35,32,24,.10);
+  --shadow-lg:0 4px 10px rgba(35,32,24,.08),0 24px 56px rgba(35,32,24,.16);
+  --font-ui:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --ease-out:cubic-bezier(.22,.9,.3,1);
+}
+html[data-theme="dark"]{
+  --cp-bg:#16171b;
+  --cp-bg-elevated:#1e2026;
+  --cp-bg-hover:#262932;
+  --cp-bg-overlay:#23252c;
+  --cp-paper:#1a1c21;
+  --cp-text:#e8e6e1;
+  --cp-text-secondary:#b3b0a8;
+  --cp-text-tertiary:#8d8b84;
+  --cp-border:#33353d;
+  --cp-border-light:#2a2c33;
+  --cp-primary:#6d97f2;
+  --cp-primary-light:#8fb0f6;
+  --cp-primary-lighter:#253046;
+  --cp-primary-contrast:#1a1c21;
+  --cp-gold:#e3b341;
+  --cp-gold-soft:#33301f;
+  --cp-blue:#88a5ff;
+  --cp-pink:#ff8eb2;
+  --cp-danger:#ef7a68;
+  --cp-danger-soft:#3a2622;
+  --cp-success:#5ecb93;
+  --cp-success-soft:#1d3328;
+  --cp-warning:#e5b567;
+  --cp-warning-soft:#332b18;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 8px rgba(0,0,0,.3);
+  --shadow-md:0 2px 4px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.45);
+  --shadow-lg:0 4px 10px rgba(0,0,0,.45),0 24px 56px rgba(0,0,0,.55);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+::selection{background:var(--cp-primary-lighter);color:var(--cp-text)}
+*{scrollbar-width:thin;scrollbar-color:var(--cp-border) transparent}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-thumb{background:var(--cp-border);border-radius:5px;border:2px solid transparent;background-clip:content-box}
+*::-webkit-scrollbar-track{background:transparent}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--cp-primary);outline-offset:2px;border-radius:4px}
+
+html,body{height:100%}
+body{
+  font-family:var(--font-ui);
+  background:var(--cp-bg);
+  color:var(--cp-text);
+  font-size:13px;
+  line-height:1.6;
+  overflow:hidden;
+}
+
+/* ============ 应用框架 ============ */
+.app{display:flex;flex-direction:column;height:100vh;min-width:1180px}
+.titlebar{
+  flex:0 0 auto;display:flex;align-items:center;gap:14px;
+  height:46px;padding:0 14px;
+  background:var(--cp-bg-elevated);border-bottom:1px solid var(--cp-border-light);
+}
+.brand{display:flex;align-items:center;gap:9px;font-weight:600;font-size:13.5px;letter-spacing:.01em}
+.brand .mark{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,#e3b341,#d98c00);display:grid;place-items:center;color:#1f1f23}
+.brand small{color:var(--cp-text-tertiary);font-weight:400}
+.book-switch{
+  display:flex;align-items:center;gap:7px;height:30px;padding:0 10px;
+  border:1px solid var(--cp-border);border-radius:var(--radius-sm);
+  background:var(--cp-bg);color:var(--cp-text-secondary);font-size:12.5px;
+}
+.book-switch:hover{border-color:var(--cp-text-tertiary);color:var(--cp-text)}
+.book-switch b{color:var(--cp-text);font-weight:500}
+.ws-nav{display:flex;align-items:center;gap:2px;margin-left:8px;height:32px;padding:3px;background:var(--cp-bg-hover);border-radius:9px}
+.ws-nav button{
+  display:flex;align-items:center;gap:6px;height:26px;padding:0 13px;
+  border-radius:7px;color:var(--cp-text-secondary);font-size:12.5px;font-weight:500;
+  transition:all .18s var(--ease-out);
+}
+.ws-nav button:hover{color:var(--cp-text)}
+.ws-nav button.on{background:var(--cp-bg-elevated);color:var(--cp-text);box-shadow:var(--shadow-sm)}
+.ws-nav button .badge{min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--cp-pink);color:#fff;font-size:11px;font-weight:600;display:grid;place-items:center}
+.titlebar .spacer{flex:1}
+.model-chip{display:flex;align-items:center;gap:6px;height:30px;padding:0 10px;border:1px solid var(--cp-border);border-radius:var(--radius-sm);font-size:12px;color:var(--cp-text-secondary)}
+.model-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--cp-success)}
+.icon-btn{display:grid;place-items:center;width:30px;height:30px;border-radius:var(--radius-sm);color:var(--cp-text-secondary)}
+.icon-btn:hover{background:var(--cp-bg-hover);color:var(--cp-text)}
+.proto-tag{font-size:11px;color:var(--cp-text-tertiary);border:1px dashed var(--cp-border);border-radius:4px;padding:2px 6px;letter-spacing:.05em}
+
+/* ============ 图标 ============ */
+svg.ic{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+svg.ic.lg{width:17px;height:17px}
+svg.ic.sm{width:13px;height:13px}
+
+/* ============ 工作区容器 ============ */
+.stage{flex:1;min-height:0;position:relative}
+.view{position:absolute;inset:0;display:none}
+.view.on{display:flex;animation:view-in .28s var(--ease-out)}
+.v-write.on,.v-codex.on,.v-review.on{display:grid}
+.v-plan.on{flex-direction:column}
+@keyframes view-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ============ 写作区 ============ */
+.v-write{grid-template-columns:236px minmax(0,1fr) 328px}
+.panel{display:flex;flex-direction:column;min-height:0;background:var(--cp-bg-elevated)}
+.panel.left{border-right:1px solid var(--cp-border-light)}
+.panel.right{border-left:1px solid var(--cp-border-light)}
+
+/* 结构树 */
+.tree-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 8px}
+.tree-head h2{font-size:12px;font-weight:600;color:var(--cp-text-tertiary);letter-spacing:.04em}
+.tree{flex:1;overflow-y:auto;padding:0 8px 16px}
+.tree .vol{margin-bottom:4px}
+.tree .vol-head{display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:var(--radius-sm);font-weight:600;font-size:12.5px;color:var(--cp-text);cursor:pointer;white-space:nowrap;overflow:hidden}
+.tree .vol-head:hover{background:var(--cp-bg-hover)}
+.tree .vol-head .tw{transition:transform .2s var(--ease-out);color:var(--cp-text-tertiary)}
+.tree .vol.open .vol-head .tw{transform:rotate(90deg)}
+.tree .kids{display:none}
+.tree .vol.open .kids{display:block}
+.tree .ch{margin:2px 0 2px 14px}
+.tree .ch-head{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:var(--radius-sm);font-size:12.5px;color:var(--cp-text-secondary);cursor:pointer;white-space:nowrap;overflow:hidden}
+.tree .ch-head:hover{background:var(--cp-bg-hover)}
+.tree .ch-head .tw{transition:transform .2s var(--ease-out);color:var(--cp-text-tertiary)}
+.tree .ch.open .ch-head .tw{transform:rotate(90deg)}
+.tree .ch.open .ch-head{color:var(--cp-text)}
+.tree .scenes{display:none}
+.tree .ch.open .scenes{display:block}
+.tree .sc{
+  display:flex;align-items:center;gap:8px;margin:1px 0 1px 16px;padding:5px 9px;
+  border-radius:var(--radius-sm);font-size:12.5px;color:var(--cp-text-secondary);cursor:pointer;
+  border-left:none;position:relative;white-space:nowrap;overflow:hidden;
+}
+.tree .sc:hover{background:var(--cp-bg-hover)}
+.tree .sc.on{background:var(--cp-primary-lighter);color:var(--cp-text);font-weight:500}
+.tree .sc .st{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+.st-done{background:var(--cp-success)} .st-draft{background:var(--cp-primary-light)} .st-outline{background:var(--cp-border)} .st-idea{background:var(--cp-warning)}
+.tree .sc .wc{margin-left:auto;font-size:11px;color:var(--cp-text-tertiary);font-variant-numeric:tabular-nums}
+.tree .add{display:flex;align-items:center;gap:7px;margin:6px 0 0 30px;padding:5px 8px;color:var(--cp-text-tertiary);font-size:12px;border-radius:var(--radius-sm);white-space:nowrap}
+.tree .add:hover{background:var(--cp-bg-hover);color:var(--cp-text)}
+.tree-stats{flex:0 0 auto;padding:12px 14px;border-top:1px solid var(--cp-border-light)}
+.tree-stats .row{display:flex;justify-content:space-between;font-size:11.5px;color:var(--cp-text-tertiary);margin-top:5px}
+.tree-stats .row b{color:var(--cp-text-secondary);font-weight:500;font-variant-numeric:tabular-nums}
+
+/* 编辑器主区 */
+.center{display:flex;flex-direction:column;min-width:0;background:var(--cp-bg)}
+.ctx-bar{
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:9px 20px;background:var(--cp-bg-elevated);border-bottom:1px solid var(--cp-border-light);
+  position:relative;
+}
+.ctx-bar .label{font-size:11.5px;color:var(--cp-text-tertiary);flex:0 0 auto;display:flex;align-items:center;gap:5px}
+.ctx-chips{display:flex;gap:6px;overflow:hidden;flex:1;min-width:0}
+.ctx-chip{
+  display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;
+  background:var(--cp-bg);border:1px solid var(--cp-border-light);font-size:11.5px;color:var(--cp-text-secondary);white-space:nowrap;
+}
+.ctx-chip b{font-weight:600;color:var(--cp-text)}
+.ctx-chip .k{width:7px;height:7px;border-radius:2.5px;flex:0 0 auto}
+.k1{background:var(--cp-gold)} .k2{background:var(--cp-blue)} .k3{background:var(--cp-pink)} .k4{background:var(--cp-success)} .k5{background:#6f5ca3}
+.ctx-budget{margin-left:auto;display:flex;align-items:center;gap:9px;flex:0 0 auto}
+.budget-bar{width:110px;height:5px;border-radius:3px;background:var(--cp-bg-hover);overflow:hidden}
+.budget-bar i{display:block;height:100%;width:58%;background:linear-gradient(90deg,var(--cp-primary-light),var(--cp-primary));border-radius:inherit}
+.ctx-budget .num{font-size:11.5px;color:var(--cp-text-tertiary);font-variant-numeric:tabular-nums}
+.ghost-btn{display:flex;align-items:center;gap:5px;height:26px;padding:0 9px;border:1px solid var(--cp-border);border-radius:var(--radius-sm);font-size:11.5px;color:var(--cp-text-secondary);background:var(--cp-bg-elevated)}
+.ghost-btn:hover{color:var(--cp-text);border-color:var(--cp-text-tertiary)}
+
+/* 上下文浮层 */
+.ctx-pop{
+  position:absolute;top:calc(100% + 6px);left:20px;width:430px;z-index:30;
+  background:var(--cp-bg-overlay);border:1px solid var(--cp-border);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);padding:14px 16px;display:none;
+}
+.ctx-pop.on{display:block;animation:pop-in .22s var(--ease-out)}
+@keyframes pop-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ctx-pop h3{font-size:12.5px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
+.ctx-pop h3 span{font-weight:400;color:var(--cp-text-tertiary);font-size:11px}
+.layer{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--cp-border-light)}
+.layer .pri{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;flex:0 0 auto}
+.layer .nm{font-size:12.5px;font-weight:500}
+.layer .ds{font-size:11px;color:var(--cp-text-tertiary)}
+.layer .tk{margin-left:auto;font-size:11px;color:var(--cp-text-tertiary);font-variant-numeric:tabular-nums}
+.layer .cut{font-size:11px;color:var(--cp-warning);flex:0 0 auto}
+
+/* 稿纸 */
+.manuscript-wrap{flex:1;min-height:0;overflow-y:auto;padding:30px 0 80px}
+.manuscript{width:min(700px,88%);margin:0 auto}
+.ms-head{margin-bottom:6px}
+.ms-head .crumb{font-size:11.5px;color:var(--cp-text-tertiary);margin-bottom:10px;display:flex;gap:6px;align-items:center}
+.ms-head h1{font-family:var(--font-serif);font-size:23px;font-weight:600;letter-spacing:.02em}
+.ms-meta{display:flex;gap:14px;margin-top:9px;font-size:11.5px;color:var(--cp-text-tertiary);align-items:center}
+.ms-meta .pov{display:flex;align-items:center;gap:5px}
+.ms-meta .pov i{width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,#a16207,#6f4a00);display:grid;place-items:center;color:#fff;font-style:normal;font-size:11px;font-weight:600}
+.ms-meta .cast{display:flex;align-items:center;gap:4px}
+.ms-meta .cast i{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-size:11px;font-weight:600;border:1.5px solid var(--cp-bg-elevated);margin-left:-5px}
+.ms-body{font-family:var(--font-serif);font-size:15.5px;line-height:2.05;color:var(--cp-text);margin-top:18px}
+.ms-body p{margin-bottom:1.35em;text-indent:2em}
+.ms-body p.noindent{text-indent:0}
+.sel-hl{background:var(--cp-primary-lighter);border-radius:2px;padding:1px 0;cursor:text}
+.sel-hl.gold{background:var(--cp-gold-soft)}
+.stream-caret{display:inline-block;width:2px;height:1em;background:var(--cp-primary);vertical-align:-.15em;margin-left:2px;animation:caret .9s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+
+/* 选中工具条 */
+.sel-toolbar{
+  position:absolute;z-index:40;display:none;align-items:center;gap:2px;padding:4px;
+  background:var(--cp-bg-overlay);border:1px solid var(--cp-border);border-radius:9px;box-shadow:var(--shadow-md);
+}
+.sel-toolbar.on{display:flex;animation:pop-in .18s var(--ease-out)}
+.sel-toolbar button{display:flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:6px;font-size:12px;color:var(--cp-text-secondary)}
+.sel-toolbar button:hover{background:var(--cp-bg-hover);color:var(--cp-text)}
+.sel-toolbar .sep{width:1px;height:16px;background:var(--cp-border);margin:0 3px}
+
+/* 编辑器底栏 */
+.ms-footer{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:8px 20px;border-top:1px solid var(--cp-border-light);background:var(--cp-bg-elevated);font-size:11.5px;color:var(--cp-text-tertiary)}
+.ms-footer .grow{flex:1}
+.ms-footer .mode{display:flex;border:1px solid var(--cp-border);border-radius:var(--radius-sm);overflow:hidden}
+.ms-footer .mode button{padding:3px 10px;font-size:11px;color:var(--cp-text-tertiary)}
+.ms-footer .mode button.on{background:var(--cp-bg-hover);color:var(--cp-text);font-weight:500}
+.ms-footer b{color:var(--cp-text-secondary);font-weight:500;font-variant-numeric:tabular-nums}
+
+/* AI 伴写栏 */
+.ai{display:flex;flex-direction:column;min-height:0}
+.ai-head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:13px 14px 9px}
+.ai-head h2{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}
+.ai-head h2 .live{width:7px;height:7px;border-radius:50%;background:var(--cp-success);box-shadow:0 0 0 3px var(--cp-success-soft)}
+.ai-head .sub{font-size:11px;color:var(--cp-text-tertiary)}
+.ai-actions{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:2px 14px 12px}
+.ai-actions button{
+  display:flex;align-items:center;gap:7px;padding:9px 11px;border-radius:var(--radius-md);
+  background:var(--cp-bg);border:1px solid var(--cp-border-light);font-size:12.5px;color:var(--cp-text-secondary);text-align:left;
+  transition:all .15s var(--ease-out);
+}
+.ai-actions button:hover{border-color:var(--cp-primary-light);color:var(--cp-text);background:var(--cp-primary-contrast)}
+.ai-actions button svg{color:var(--cp-gold)}
+.ai-feed{flex:1;min-height:0;overflow-y:auto;padding:4px 14px 10px;display:flex;flex-direction:column;gap:12px}
+.feed-day{font-size:11px;color:var(--cp-text-tertiary);text-align:center;display:flex;align-items:center;gap:10px}
+.feed-day::before,.feed-day::after{content:"";flex:1;height:1px;background:var(--cp-border-light)}
+.cand{background:var(--cp-bg);border:1px solid var(--cp-border-light);border-radius:var(--radius-md);overflow:hidden;animation:cand-in .35s var(--ease-out)}
+@keyframes cand-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.cand-head{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--cp-border-light);font-size:11.5px;color:var(--cp-text-tertiary)}
+.cand-head .tagc{padding:1px 7px;border-radius:4px;background:var(--cp-gold-soft);color:var(--cp-gold);font-weight:600;font-size:11px}
+.cand-head .act{margin-left:auto;display:flex;gap:4px}
+.cand-head .act button{padding:2px 7px;border-radius:5px;font-size:11px;color:var(--cp-text-tertiary)}
+.cand-head .act button:hover{background:var(--cp-bg-hover);color:var(--cp-text)}
+.cand-head .act .primary{background:var(--cp-primary);color:#fff;font-weight:500}
+.cand-head .act .primary:hover{background:var(--cp-primary);opacity:.9;color:#fff}
+.cand-body{padding:11px 13px;font-family:var(--font-serif);font-size:13.5px;line-height:1.95;color:var(--cp-text);max-height:210px;overflow-y:auto}
+.cand-body p{text-indent:2em;margin-bottom:.7em}
+.cand.picked{border-color:var(--cp-primary);box-shadow:0 0 0 1px var(--cp-primary)}
+.cand.dim{opacity:.45}
+.cand .picked-mark{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--cp-primary);font-weight:600;font-family:var(--font-ui)}
+.chat-msg{display:flex;flex-direction:column;gap:3px}
+.chat-msg .who{font-size:11px;color:var(--cp-text-tertiary)}
+.chat-msg .bubble{padding:9px 12px;border-radius:11px;font-size:12.5px;line-height:1.7;background:var(--cp-bg);border:1px solid var(--cp-border-light);color:var(--cp-text)}
+.chat-msg.me .bubble{background:var(--cp-primary-lighter);border-color:transparent}
+.composer{flex:0 0 auto;padding:10px 14px 14px;border-top:1px solid var(--cp-border-light)}
+.composer .box{display:flex;align-items:flex-end;gap:8px;padding:9px 10px 9px 12px;background:var(--cp-bg);border:1px solid var(--cp-border);border-radius:var(--radius-md)}
+.composer textarea{flex:1;border:0;outline:0;background:transparent;resize:none;font:inherit;font-size:12.5px;line-height:1.55;color:var(--cp-text);height:36px}
+.composer textarea::placeholder{color:var(--cp-text-tertiary)}
+.send{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--cp-primary);color:#fff;flex:0 0 auto}
+.send:hover{opacity:.9}
+.composer .hint{margin-top:7px;font-size:11px;color:var(--cp-text-tertiary);display:flex;gap:10px}
+.composer .hint span{display:flex;align-items:center;gap:4px}
+
+/* ============ 编排区 ============ */
+.v-plan{flex-direction:column;background:var(--cp-bg)}
+.plan-toolbar{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:12px 22px;background:var(--cp-bg-elevated);border-bottom:1px solid var(--cp-border-light)}
+.plan-toolbar h2{font-size:14.5px;font-weight:600}
+.plan-toolbar .desc{font-size:12px;color:var(--cp-text-tertiary)}
+.plan-toolbar .right{margin-left:auto;display:flex;gap:8px}
+.plan-scroll{flex:1;min-height:0;overflow-y:auto;padding:22px}
+.plan-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px;align-items:start}
+.board{background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.board-head{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1px solid var(--cp-border-light)}
+.board-head h3{font-size:13px;font-weight:600}
+.board-head .meta{font-size:11.5px;color:var(--cp-text-tertiary)}
+.board-head .right{margin-left:auto;display:flex;gap:6px}
+.ch-row{border-top:1px solid var(--cp-border-light)}
+.ch-row .row{display:flex;align-items:center;gap:11px;padding:11px 16px;cursor:pointer}
+.ch-row .row:hover{background:var(--cp-bg-hover)}
+.ch-row .num{width:34px;height:26px;border-radius:7px;display:grid;place-items:center;font-size:11px;font-weight:600;flex:0 0 auto}
+.n-gold{background:var(--cp-gold-soft);color:var(--cp-gold)} .n-gray{background:var(--cp-bg-hover);color:var(--cp-text-tertiary)}
+.ch-row .tt{font-weight:500;font-size:13px}
+.ch-row .summ{font-size:11.5px;color:var(--cp-text-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:60px}
+.ch-row .prog{width:74px;flex:0 0 auto}
+.prog-bar{height:4px;border-radius:2px;background:var(--cp-bg-hover);overflow:hidden;margin-bottom:3px}
+.prog-bar i{display:block;height:100%;border-radius:inherit;background:var(--cp-primary)}
+.ch-row .prog span{font-size:11px;color:var(--cp-text-tertiary);font-variant-numeric:tabular-nums}
+.status-pill{flex:0 0 auto;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:500}
+.sp-done{background:var(--cp-success-soft);color:var(--cp-success)}
+.sp-draft{background:var(--cp-primary-lighter);color:var(--cp-primary)}
+.sp-outline{background:var(--cp-bg-hover);color:var(--cp-text-tertiary)}
+.ch-row .chev{color:var(--cp-text-tertiary);transition:transform .2s var(--ease-out)}
+.ch-row.open .chev{transform:rotate(90deg)}
+.beats{display:none;padding:2px 16px 14px 61px}
+.ch-row.open .beats{display:flex;flex-direction:column;gap:7px}
+.beat{display:flex;gap:9px;align-items:flex-start;padding:9px 12px;background:var(--cp-bg);border:1px solid var(--cp-border-light);border-radius:var(--radius-md)}
+.beat .bn{width:18px;height:18px;border-radius:5px;background:var(--cp-gold-soft);color:var(--cp-gold);display:grid;place-items:center;font-size:11px;font-weight:700;flex:0 0 auto;margin-top:1px}
+.beat .bt{font-size:12.5px;font-weight:500}
+.beat .bd{font-size:11.5px;color:var(--cp-text-tertiary);margin-top:1px}
+.beat .bc{margin-left:auto;display:flex;flex:0 0 auto}
+.beat .bc i{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-size:11px;font-weight:600;border:1.5px solid var(--cp-bg);margin-left:-5px}
+
+/* 时间轴 + 伏笔 */
+.timeline{background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:14px 16px 10px;margin-bottom:18px}
+.timeline h3{font-size:13px;font-weight:600;display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.timeline h3 .meta{font-size:11.5px;color:var(--cp-text-tertiary);font-weight:400}
+.lane{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:center;padding:6px 0}
+.lane .ln{font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:6px}
+.lane .ln i{width:8px;height:8px;border-radius:3px;flex:0 0 auto}
+.lane .track{position:relative;height:26px;background:var(--cp-bg);border-radius:7px}
+.lane .seg{position:absolute;top:5px;height:16px;border-radius:5px;opacity:.92}
+.seg-main{background:#3d6fe0} .seg-sub1{background:#c13a68;opacity:.92} .seg-sub2{background:var(--cp-gold);opacity:.92}
+html[data-theme="dark"] .seg-sub2{background:#a16207}
+.lane .seg em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:11px;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden}
+.lane-ruler{display:grid;grid-template-columns:76px 1fr;gap:10px;margin-bottom:2px}
+.lane-ruler .marks{display:flex;justify-content:space-between;font-size:11px;color:var(--cp-text-tertiary);font-variant-numeric:tabular-nums}
+.foreshadow{border-top:1px solid var(--cp-border-light);margin-top:10px;padding-top:12px}
+.fs-item{display:flex;align-items:center;gap:10px;padding:7px 0}
+.fs-item .fsd{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+.fs-item .ft{font-size:12.5px;font-weight:500}
+.fs-item .fd{font-size:11.5px;color:var(--cp-text-tertiary)}
+.fs-item .state{margin-left:auto;flex:0 0 auto}
+.fst{padding:2px 9px;border-radius:999px;font-size:11px;font-weight:500}
+.fst-open{background:var(--cp-warning-soft);color:var(--cp-warning)}
+.fst-planted{background:var(--cp-bg-hover);color:var(--cp-text-tertiary)}
+.fst-due{background:var(--cp-danger-soft);color:var(--cp-danger)}
+
+/* ============ 设定区 ============ */
+.v-codex{grid-template-columns:264px minmax(0,1fr)}
+.cx-side{background:var(--cp-bg-elevated);border-right:1px solid var(--cp-border-light);display:flex;flex-direction:column;min-height:0}
+.cx-side .head{padding:14px 14px 10px}
+.cx-side .head h2{font-size:14px;font-weight:600}
+.cx-side .head p{font-size:11.5px;color:var(--cp-text-tertiary);margin-top:3px}
+.cx-search{margin:0 12px 10px;display:flex;align-items:center;gap:7px;height:30px;padding:0 10px;background:var(--cp-bg);border:1px solid var(--cp-border);border-radius:var(--radius-sm);color:var(--cp-text-tertiary)}
+.cx-search input{flex:1;border:0;outline:0;background:transparent;font:inherit;font-size:12px;color:var(--cp-text)}
+.cx-list{flex:1;overflow-y:auto;padding:0 8px 14px}
+.cx-group{margin-top:8px}
+.cx-group .g{display:flex;align-items:center;gap:6px;padding:5px 8px;font-size:11px;font-weight:600;color:var(--cp-text-tertiary);letter-spacing:.05em}
+.cx-group .g .cnt{margin-left:auto;font-weight:400}
+.cx-item{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:var(--radius-sm);cursor:pointer}
+.cx-item:hover{background:var(--cp-bg-hover)}
+.cx-item.on{background:var(--cp-primary-lighter)}
+.avatar{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:600;flex:0 0 auto}
+.cx-item .nm{font-size:12.5px;font-weight:500}
+.cx-item .al{font-size:11px;color:var(--cp-text-tertiary)}
+.cx-item .inj{margin-left:auto;flex:0 0 auto}
+.inj-dot{width:7px;height:7px;border-radius:50%}
+.cx-detail{min-width:0;overflow-y:auto;padding:26px 34px 40px;background:var(--cp-bg)}
+.cx-card{width:min(760px,100%);background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:24px 28px}
+.cx-head{display:flex;align-items:flex-start;gap:16px}
+.cx-head .avatar{width:52px;height:52px;border-radius:14px;font-size:19px}
+.cx-head h1{font-size:20px;font-weight:600;font-family:var(--font-serif)}
+.cx-head .role{font-size:12px;color:var(--cp-text-tertiary);margin-top:3px}
+.aliases{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.alias{padding:2px 9px;border-radius:999px;background:var(--cp-gold-soft);color:var(--cp-gold);font-size:11px;font-weight:500}
+.cx-head .right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+.inj-seg{display:flex;background:var(--cp-bg-hover);border-radius:8px;padding:2.5px}
+.inj-seg button{display:flex;align-items:center;gap:5px;padding:4px 11px;border-radius:6px;font-size:11.5px;color:var(--cp-text-tertiary)}
+.inj-seg button.on{background:var(--cp-bg-elevated);color:var(--cp-text);font-weight:500;box-shadow:var(--shadow-sm)}
+.inj-seg .legend{font-size:11px;color:var(--cp-text-tertiary);display:flex;align-items:center;gap:5px;justify-content:flex-end}
+.mention-heat{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--cp-text-tertiary)}
+.heat-bars{display:flex;gap:2.5px;align-items:flex-end;height:18px}
+.heat-bars i{width:5px;border-radius:2px;background:var(--cp-primary-light);opacity:.85}
+.cx-fields{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{background:var(--cp-bg);border:1px solid var(--cp-border-light);border-radius:var(--radius-md);padding:12px 14px}
+.field .fh{font-size:11px;font-weight:600;color:var(--cp-text-tertiary);letter-spacing:.05em;display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.field h4 .ai-tag{font-weight:500;color:var(--cp-gold);background:var(--cp-gold-soft);padding:0 6px;border-radius:4px;font-size:11px;letter-spacing:0}
+.field p{font-size:12.5px;line-height:1.75;color:var(--cp-text-secondary)}
+.field.wide{grid-column:1/-1}
+.cx-rel{margin-top:22px}
+.cx-rel .sh,.cx-chapters .sh{font-size:12.5px;font-weight:600;margin-bottom:10px}
+.rel-graph{display:flex;flex-wrap:wrap;gap:8px}
+.rel-pill{display:flex;align-items:center;gap:7px;padding:6px 12px;background:var(--cp-bg);border:1px solid var(--cp-border-light);border-radius:999px;font-size:12px}
+.rel-pill .arrow{color:var(--cp-text-tertiary);font-size:11px}
+.rel-pill b{font-weight:500}
+.rel-pill .rel-kind{font-size:11px;color:var(--cp-gold);background:var(--cp-gold-soft);padding:1px 7px;border-radius:4px}
+.chapters-used{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.chap-chip{padding:3px 10px;border-radius:6px;background:var(--cp-bg);border:1px solid var(--cp-border-light);font-size:11.5px;color:var(--cp-text-secondary)}
+
+/* ============ 审阅区 ============ */
+.v-review{grid-template-columns:272px minmax(0,1fr)}
+.rv-queue{background:var(--cp-bg-elevated);border-right:1px solid var(--cp-border-light);display:flex;flex-direction:column;min-height:0}
+.rv-queue .head{padding:14px 14px 10px;display:flex;align-items:center;justify-content:space-between}
+.rv-queue .head h2{font-size:14px;font-weight:600}
+.rv-queue .head .cnt{font-size:11px;color:var(--cp-text-tertiary)}
+.rv-list{flex:1;overflow-y:auto;padding:0 8px 14px}
+.rv-item{padding:11px 12px;border-radius:var(--radius-md);cursor:pointer;margin-bottom:4px;border:1px solid transparent}
+.rv-item:hover{background:var(--cp-bg-hover)}
+.rv-item.on{background:var(--cp-primary-lighter);border-color:transparent}
+.rv-item .t{font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:7px}
+.rv-item .d{font-size:11px;color:var(--cp-text-tertiary);margin-top:3px}
+.rv-item .t .kind{padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600;flex:0 0 auto}
+.kd-opt{background:var(--cp-pink);color:#fff} .kd-fix{background:var(--cp-warning-soft);color:var(--cp-warning)} .kd-ai{background:var(--cp-primary-lighter);color:var(--cp-primary)}
+html[data-theme="dark"] .kd-opt{color:#1a1c21}
+.rv-main{min-width:0;overflow-y:auto;padding:22px 30px 40px;background:var(--cp-bg)}
+.rv-doc{width:min(820px,100%);margin:0 auto}
+.rv-doc .head{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.rv-doc h1{font-size:18px;font-weight:600}
+.rv-doc .sub{font-size:12px;color:var(--cp-text-tertiary);margin-top:4px}
+.rv-doc .head .right{margin-left:auto;display:flex;gap:8px;flex:0 0 auto}
+.primary-btn{display:flex;align-items:center;gap:7px;height:32px;padding:0 14px;border-radius:var(--radius-sm);background:var(--cp-primary);color:#fff;font-size:12.5px;font-weight:500}
+.primary-btn:hover{opacity:.92}
+.snapshot-note{display:flex;align-items:center;gap:7px;margin:10px 0 16px;padding:8px 12px;background:var(--cp-success-soft);border-radius:var(--radius-sm);font-size:11.5px;color:var(--cp-success)}
+.diff{background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.diff-head{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--cp-border-light);font-size:12px;color:var(--cp-text-tertiary)}
+.diff-head .sum{margin-left:auto;display:flex;gap:12px}
+.diff-head .sum b{font-variant-numeric:tabular-nums}
+.diff-head .sum .add{color:var(--cp-success)} .diff-head .sum .del{color:var(--cp-danger)}
+.hunk{padding:14px 18px;border-top:1px solid var(--cp-border-light)}
+.hunk:first-of-type{border-top:0}
+.hunk.accepted{background:color-mix(in srgb,var(--cp-success-soft) 40%,transparent)}
+.hunk.rejected{opacity:.5}
+.hunk-meta{display:flex;align-items:center;gap:9px;margin-bottom:9px;font-size:11px;color:var(--cp-text-tertiary)}
+.hunk-meta .no{font-weight:600;color:var(--cp-text-secondary)}
+.hunk-meta .right{margin-left:auto;display:flex;gap:5px}
+.hunk-meta .right button{display:flex;align-items:center;gap:4px;padding:3px 10px;border-radius:6px;border:1px solid var(--cp-border);font-size:11px;color:var(--cp-text-secondary);background:var(--cp-bg-elevated)}
+.hunk-meta .right button:hover{border-color:var(--cp-text-tertiary);color:var(--cp-text)}
+.hunk.accepted .right .yes{background:var(--cp-success);border-color:var(--cp-success);color:#fff}
+.hunk.rejected .right .no-btn{background:var(--cp-danger);border-color:var(--cp-danger);color:#fff}
+.hunk .old{font-family:var(--font-serif);font-size:13.5px;line-height:1.9;color:var(--cp-text-tertiary);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--cp-danger) 55%,transparent);text-decoration-thickness:1px;padding:0 4px}
+.hunk .new{font-family:var(--font-serif);font-size:13.5px;line-height:1.9;margin-top:7px;padding:9px 12px;background:var(--cp-success-soft);border-radius:8px}
+html[data-theme="dark"] .hunk .new{background:color-mix(in srgb,var(--cp-success-soft) 55%,transparent)}
+.hunk.keep .old{text-decoration:none;color:var(--cp-text)}
+.hunk.keep .new{display:none}
+.consist{margin-top:20px;background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+.consist .head{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1px solid var(--cp-border-light)}
+.consist .head .cs-t{font-size:13px;font-weight:600}
+.consist .head .meta{font-size:11.5px;color:var(--cp-text-tertiary)}
+.consist .head .badge{margin-left:auto;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;background:var(--cp-warning-soft);color:var(--cp-warning)}
+.finding{display:flex;gap:11px;padding:12px 16px;border-top:1px solid var(--cp-border-light);align-items:flex-start}
+.finding .sev{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:0 0 auto}
+.sev-hi{background:var(--cp-danger)} .sev-md{background:var(--cp-warning)}
+.finding .ft{font-size:12.5px;font-weight:500}
+.finding .fd{font-size:11.5px;color:var(--cp-text-tertiary);margin-top:2px;line-height:1.65}
+.finding .go{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--cp-primary)}
+.finding .go:hover{text-decoration:underline}
+
+/* ============ 书架与开书向导 ============ */
+body:not(.in-book) .tb-book{display:none}
+.home-scroll,.init-scroll{position:absolute;inset:0;overflow-y:auto;background:var(--cp-bg)}
+.home-wrap{width:min(920px,92%);margin:0 auto;padding:54px 0 90px}
+.home-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}
+.home-head h1{font-size:24px;font-weight:600;letter-spacing:.01em}
+.home-head .sub{margin-top:7px;color:var(--cp-text-tertiary);font-size:12.5px;font-variant-numeric:tabular-nums}
+.home-actions{display:flex;gap:9px}
+.home-actions .ghost-btn{height:32px;padding:0 12px;font-size:12px}
+.shelf{display:flex;flex-direction:column;gap:13px}
+.book-card{
+  display:flex;gap:16px;width:100%;padding:16px;text-align:left;cursor:pointer;
+  background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);
+  transition:transform .18s var(--ease-out),box-shadow .18s var(--ease-out),border-color .18s var(--ease-out);
+}
+.book-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--cp-border)}
+.book-card .cover{
+  display:grid;place-items:center;width:84px;height:112px;border-radius:10px;flex:0 0 auto;
+  color:#fff;font-family:var(--font-serif);font-size:30px;font-weight:600;position:relative;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),inset -16px 0 26px rgba(0,0,0,.18);
+  text-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+.cv-gold{background:linear-gradient(160deg,#8a5306,#4a2e00)}
+.cv-blue{background:linear-gradient(160deg,#2f5fd0,#1d3a85)}
+.cv-rose{background:linear-gradient(160deg,#c13a68,#7e2145)}
+.bc-body{display:flex;min-width:0;flex:1;flex-direction:column;gap:5px}
+.bc-top{display:flex;align-items:center;gap:9px}
+.bc-top .bt{font-family:var(--font-serif);font-size:16px;font-weight:600}
+.bc-desc{overflow:hidden;color:var(--cp-text-secondary);text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
+.bc-meta{display:flex;gap:14px;color:var(--cp-text-tertiary);font-size:11.5px;font-variant-numeric:tabular-nums}
+.bc-prog{display:flex;align-items:center;gap:10px;margin-top:auto}
+.bc-prog .prog-bar{flex:1}
+.bc-prog span{color:var(--cp-text-tertiary);white-space:nowrap;font-size:11.5px}
+.bc-cta{display:flex;align-items:center;gap:5px;color:var(--cp-primary);font-size:12.5px;font-weight:500;opacity:0;transform:translateX(-4px);transition:all .18s var(--ease-out)}
+.book-card:hover .bc-cta{opacity:1;transform:none}
+.book-card.new{justify-content:center;min-height:96px;box-shadow:none;color:var(--cp-text-tertiary);background:transparent;border-style:dashed}
+.book-card.new:hover{color:var(--cp-text);border-color:var(--cp-text-tertiary);transform:none;box-shadow:none}
+
+.init-wrap{width:min(720px,92%);margin:0 auto;padding:46px 0 90px}
+.init-back{margin-bottom:22px}
+.init-wrap h1{font-size:24px;font-weight:600}
+.init-sub{margin:8px 0 26px;color:var(--cp-text-tertiary);font-size:13px}
+.mode-row{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:26px}
+.mode-card{display:flex;flex-direction:column;gap:4px;padding:14px 16px;text-align:left;background:var(--cp-bg-elevated);border:1px solid var(--cp-border);border-radius:var(--radius-md);transition:all .15s var(--ease-out)}
+.mode-card b{font-size:13.5px;font-weight:600}
+.mode-card span{color:var(--cp-text-tertiary);font-size:11.5px}
+.mode-card:hover{border-color:var(--cp-text-tertiary)}
+.mode-card.on{background:var(--cp-primary-contrast);border-color:var(--cp-primary);box-shadow:0 0 0 1px var(--cp-primary)}
+.sec-t{margin:0 0 12px;font-size:13px;font-weight:600}
+.tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:26px}
+.tpl-chip{display:flex;flex-direction:column;gap:3px;padding:12px 14px;text-align:left;background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-md);transition:all .15s var(--ease-out)}
+.tpl-chip b{font-size:12.5px;font-weight:600}
+.tpl-chip span{color:var(--cp-text-tertiary);font-size:11px;line-height:1.55}
+.tpl-chip:hover{border-color:var(--cp-text-tertiary)}
+.tpl-chip.on{background:var(--cp-primary-contrast);border-color:var(--cp-primary);box-shadow:0 0 0 1px var(--cp-primary)}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:26px}
+.f-grid .full{grid-column:1/-1}
+.f label{display:block;margin-bottom:6px;color:var(--cp-text-tertiary);font-size:11.5px}
+.inp{width:100%;height:36px;padding:0 12px;color:var(--cp-text);background:var(--cp-bg-elevated);border:1px solid var(--cp-border);border-radius:8px;outline:0;font:inherit;font-size:13px}
+.inp:focus{border-color:var(--cp-primary);box-shadow:0 0 0 3px var(--cp-primary-lighter)}
+textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-height:1.6}
+.drop{display:grid;place-items:center;gap:6px;min-height:150px;padding:30px 26px;margin-bottom:26px;text-align:center;color:var(--cp-text-tertiary);background:var(--cp-bg-elevated);border:1.5px dashed var(--cp-border);border-radius:var(--radius-lg)}
+.drop b{color:var(--cp-text-secondary);font-size:13px}
+.drop span{font-size:11.5px}
+.init-actions{display:flex;align-items:center;gap:14px}
+.init-note{color:var(--cp-text-tertiary);font-size:11.5px}
+
+@media (max-width:1280px){
+  .v-write{grid-template-columns:210px minmax(0,1fr) 300px}
+  .plan-grid{grid-template-columns:1fr}
+  .cx-fields{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== 顶部应用条 ===== -->
+  <header class="titlebar">
+    <div class="brand">
+      <span class="mark"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3v3M5.6 5.6l2.1 2.1M18.4 5.6l-2.1 2.1M4 13h3M17 13h3M8 21h8M9 17h6l1.2-2.6a5.5 5.5 0 1 0-8.4 0z"/></svg></span>
+      Mira Novel Studio <small>· 原型演示</small>
+    </div>
+    <button class="book-switch tb-book" id="btnBackHome" title="返回书架"><svg class="ic sm" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5zM4 19.5V6.5M12 8c1.5-1 3-1 4 0v6c-1-1-2.5-1-4 0z"/></svg><b>提灯照河山</b><span>卷一 · 6.8 万字</span><svg class="ic sm" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+    <nav class="ws-nav tb-book" id="wsNav">
+      <button class="on" data-view="write"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>写作</button>
+      <button data-view="plan"><svg class="ic sm" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="12" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="19" width="7" height="2" rx="1"/></svg>编排</button>
+      <button data-view="codex"><svg class="ic sm" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>设定</button>
+      <button data-view="review"><svg class="ic sm" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>审阅<span class="badge">3</span></button>
+    </nav>
+    <div class="spacer"></div>
+    <span class="proto-tag">PROTOTYPE</span>
+    <div class="model-chip tb-book"><span class="dot"></span>deepseek-v4 · 创作</div>
+    <button class="icon-btn" id="themeBtn" title="切换明暗主题" aria-label="切换明暗主题"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+  </header>
+
+  <div class="stage">
+
+    <!-- ================= 书架（选择项目） ================= -->
+    <section class="view v-home on" id="view-home">
+      <div class="home-scroll">
+        <div class="home-wrap">
+          <header class="home-head">
+            <div>
+              <h1>书架</h1>
+              <p class="sub">在写 2 · 完本 1 · 本周 8,412 字 · 连续更新 3 天</p>
+            </div>
+            <div class="home-actions">
+              <button class="ghost-btn" id="btnImportHome"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>导入 TXT / JSON</button>
+              <button class="primary-btn" id="btnNewBook"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建作品</button>
+            </div>
+          </header>
+          <div class="shelf">
+            <button class="book-card" data-open-book="deng">
+              <span class="cover cv-gold">灯</span>
+              <span class="bc-body">
+                <span class="bc-top"><h2 class="bt">提灯照河山</h2><span class="status-pill sp-draft">连载中</span></span>
+                <span class="bc-desc">东方玄幻 · 「不存在的第七任」提灯人上路，想查清前六任怎么死的，却先查出了自己左臂里缝着的东西。</span>
+                <span class="bc-meta"><span>卷一 · 归墟夜话 · 4 章 8 场景</span><span>6.8 万字</span><span>今天 14:32</span></span>
+                <span class="bc-prog"><span class="prog-bar"><i style="width:34%"></i></span><span>全书 34% · 今日 1,842 / 3,000 字</span></span>
+              </span>
+              <span class="bc-cta">继续写作 <svg class="ic sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </button>
+            <button class="book-card" data-open-book="wu">
+              <span class="cover cv-blue">雾</span>
+              <span class="bc-body">
+                <span class="bc-top"><h2 class="bt">雾起长安</h2><span class="status-pill sp-outline">大纲阶段</span></span>
+                <span class="bc-desc">悬疑刑侦 · 天宝年间的大理寺评事，接手一桩卷宗里被反复撕掉的案子。</span>
+                <span class="bc-meta"><span>大纲 3 稿 · 人物 9 条</span><span>0.9 万字</span><span>3 天前</span></span>
+                <span class="bc-prog"><span class="prog-bar"><i style="width:6%"></i></span><span>构想 6%</span></span>
+              </span>
+              <span class="bc-cta">打开作品 <svg class="ic sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </button>
+            <button class="book-card" data-open-book="chun">
+              <span class="cover cv-rose">春</span>
+              <span class="bc-body">
+                <span class="bc-top"><h2 class="bt">春窗灯影录</h2><span class="status-pill sp-done">已完本</span></span>
+                <span class="bc-desc">古言宅斗 · 借住外祖家的孤女，在灯影与账目之间拿回自己的嫁妆。</span>
+                <span class="bc-meta"><span>全 3 卷 · 62 章</span><span>42.3 万字</span><span>2026-08-14</span></span>
+                <span class="bc-prog"><span class="prog-bar"><i style="width:100%"></i></span><span>已完本 · 可导出 EPUB</span></span>
+              </span>
+              <span class="bc-cta">打开作品 <svg class="ic sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </button>
+            <button class="book-card new" id="btnNewBookShelf">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>从模板或空白开一本新书
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 开书向导（初始化） ================= -->
+    <section class="view v-init" id="view-init">
+      <div class="init-scroll">
+        <div class="init-wrap">
+          <button class="ghost-btn init-back" id="btnInitBack"><svg class="ic sm" viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>返回书架</button>
+          <h1>开一本新书</h1>
+          <p class="init-sub">选择起点。题材模板会预填实体字段、结构模板与提示词组，进入工作台后随时可改。</p>
+
+          <div class="mode-row" id="initModes">
+            <button class="mode-card on" data-mode="tpl"><b>从模板开始</b><span>题材预设 · 实体与提示词开箱即用</span></button>
+            <button class="mode-card" data-mode="blank"><b>空白作品</b><span>一张白纸 · 从一句话内核写起</span></button>
+            <button class="mode-card" data-mode="import"><b>导入已有作品</b><span>TXT 按章回自动分章 / 项目 JSON</span></button>
+          </div>
+
+          <div id="pane-tpl">
+            <h2 class="sec-t">题材模板</h2>
+            <div class="tpl-grid" id="tplGrid">
+              <button class="tpl-chip on"><b>东方玄幻</b><span>12 条实体预设 · 8 组提示词 · 卷纲/章纲/Beats 三层结构</span></button>
+              <button class="tpl-chip"><b>都市异闻</b><span>10 条实体预设 · 规则怪谈约束 · 悬念钩子库</span></button>
+              <button class="tpl-chip"><b>悬疑刑侦</b><span>时间线面板优先 · 证据链实体 · 误导清单</span></button>
+              <button class="tpl-chip"><b>科幻 · 末日</b><span>世界观规则引擎 · 技术树 · 群像卡</span></button>
+              <button class="tpl-chip"><b>古言 · 宅斗</b><span>人物关系图优先 · 家族势力卡 · 称谓表</span></button>
+              <button class="tpl-chip"><b>无限流</b><span>副本结构模板 · 规则卡组 · 队伍状态追踪</span></button>
+            </div>
+          </div>
+
+          <div id="pane-import" style="display:none">
+            <div class="drop">
+              <b>拖入 TXT 或项目 JSON，或点击选择文件</b>
+              <span>TXT 将按章回正则自动分章，并生成细纲草稿进入审阅队列 · JSON 完整恢复作品</span>
+            </div>
+          </div>
+
+          <div id="pane-fields">
+            <h2 class="sec-t">基本信息</h2>
+            <div class="f-grid">
+              <div class="f"><label for="fTitle">书名</label><input class="inp" id="fTitle" placeholder="例：提灯照河山"></div>
+              <div class="f"><label for="fLen">目标篇幅</label><select class="inp" id="fLen"><option>30 万字（快节奏）</option><option selected>60 万字（标准长篇）</option><option>100 万字+（超长连载）</option></select></div>
+              <div class="f full"><label for="fCore">一句话内核</label><textarea class="inp" id="fCore" placeholder="背着「不存在的第七任」名分上路的提灯人，想查清前六任怎么死的，却先查出了自己左臂里缝着的东西。"></textarea></div>
+              <div class="f"><label for="fPov">叙事视角</label><select class="inp" id="fPov"><option selected>第三人称限知（单视角）</option><option>第三人称多视角</option><option>第一人称</option></select></div>
+              <div class="f"><label for="fModel">创作模型</label><select class="inp" id="fModel"><option selected>deepseek-v4（Harness 配置）</option><option>glm-5-air（草稿用）</option></select></div>
+            </div>
+          </div>
+
+          <div class="init-actions">
+            <button class="primary-btn" id="btnCreate"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>创建并进入工作台</button>
+            <span class="init-note">创建后先进入「设定区」，模板实体已就位，写第一章前可随时调整</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 写作区 ================= -->
+    <section class="view v-write" id="view-write">
+      <!-- 结构树 -->
+      <aside class="panel left">
+        <div class="tree-head"><h2>结构</h2><button class="icon-btn" style="width:24px;height:24px" aria-label="折叠全部"><svg class="ic sm" viewBox="0 0 24 24"><path d="m7 11 5 5 5-5M7 7l5 5 5-5"/></svg></button></div>
+        <div class="tree" id="tree">
+          <div class="vol open">
+            <button class="vol-head"><svg class="tw ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg><svg class="ic sm" viewBox="0 0 24 24"><path d="M2 6s1.5-2 5-2 5 2 5 2v14s-1.5-1-5-1-5 1-5 1zM12 6s1.5-2 5-2 5 2 5 2v14s-1.5-1-5-1-5 1-5 1z"/></svg>卷一 · 归墟夜话</button>
+            <div class="kids">
+              <div class="ch open">
+                <button class="ch-head"><svg class="tw ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>第一章 破庙惊雷</button>
+                <div class="scenes">
+                  <button class="sc on"><span class="st st-done"></span>雷夜借宿<span class="wc">3.2k</span></button>
+                  <button class="sc"><span class="st st-done"></span>铜灯初醒<span class="wc">2.8k</span></button>
+                </div>
+              </div>
+              <div class="ch">
+                <button class="ch-head"><svg class="tw ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>第二章 灯下故人</button>
+                <div class="scenes">
+                  <button class="sc"><span class="st st-done"></span>故人对饮<span class="wc">2.9k</span></button>
+                  <button class="sc"><span class="st st-draft"></span>旧疤的秘密<span class="wc">1.1k</span></button>
+                </div>
+              </div>
+              <div class="ch">
+                <button class="ch-head"><svg class="tw ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>第三章 落雁城</button>
+                <div class="scenes">
+                  <button class="sc"><span class="st st-draft"></span>城门告示<span class="wc">0.6k</span></button>
+                  <button class="sc"><span class="st st-outline"></span>夜探钦天监<span class="wc">—</span></button>
+                </div>
+              </div>
+              <div class="ch">
+                <button class="ch-head"><svg class="tw ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>第四章 河灯祭</button>
+                <div class="scenes">
+                  <button class="sc"><span class="st st-idea"></span>万人放灯<span class="wc">—</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="add"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建章节</button>
+        </div>
+        <div class="tree-stats">
+          <div class="row"><span>今日已写</span><b>1,842 字</b></div>
+          <div class="row"><span>日更目标</span><b>3,000 字 · 61%</b></div>
+        </div>
+      </aside>
+
+      <!-- 编辑器 -->
+      <main class="center" id="center">
+        <!-- 上下文注入条 -->
+        <div class="ctx-bar" id="ctxBar">
+          <span class="label" title="本次生成将注入的上下文"><svg class="ic sm" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
+          <div class="ctx-chips">
+            <span class="ctx-chip"><span class="k k1"></span>文风·河山体 <b>240t</b></span>
+            <span class="ctx-chip"><span class="k k2"></span>实体×3 <b>510t</b></span>
+            <span class="ctx-chip"><span class="k k3"></span>前情×3章 <b>360t</b></span>
+            <span class="ctx-chip"><span class="k k4"></span>细纲+Beats <b>180t</b></span>
+            <span class="ctx-chip"><span class="k k5"></span>上章结尾 <b>400t</b></span>
+          </div>
+          <div class="ctx-budget">
+            <span class="num">1.7k / 128k</span>
+            <div class="budget-bar" style="width:80px"><i></i></div>
+            <button class="ghost-btn" id="ctxToggle"><svg class="ic sm" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>预览</button>
+          </div>
+          <!-- 分层浮层 -->
+          <div class="ctx-pop" id="ctxPop" role="dialog" aria-label="上下文分层预览">
+            <h3>Prompt 组装预览 <span>按优先级注入 · 超预算自上而下裁剪</span></h3>
+            <div class="layer"><span class="pri" style="background:var(--cp-primary)">1</span><div><div class="nm">创作规范 + 文风「河山体」</div><div class="ds">system 层 · 风格蒸馏资产，全篇固定</div></div><span class="tk">240t</span></div>
+            <div class="layer"><span class="pri" style="background:#6f5ca3">2</span><div><div class="nm">用户手动指定</div><div class="ds">本次无手动钉选内容</div></div><span class="tk">0t</span></div>
+            <div class="layer"><span class="pri" style="background:var(--cp-gold)">3</span><div><div class="nm">本章细纲 + 4 条 Beats</div><div class="ds">场景生成契约，验收依据</div></div><span class="tk">180t</span></div>
+            <div class="layer"><span class="pri" style="background:var(--cp-blue)">4</span><div><div class="nm">相关实体卡 ×3</div><div class="ds">按出场关系与别名命中 · 「铜灯」级联带出「归墟」设定</div></div><span class="tk">510t</span></div>
+            <div class="layer"><span class="pri" style="background:var(--cp-pink)">5</span><div><div class="nm">前情摘要链（第 1–3 章）</div><div class="ds">每章 ≤200 字，定稿时自动生成</div></div><span class="tk">360t</span></div>
+            <div class="layer"><span class="pri" style="background:var(--cp-success)">6</span><div><div class="nm">上章结尾原文 400 字</div><div class="ds">保证叙事衔接 · 预算不足时最先裁剪</div></div><span class="tk">400t</span><span class="cut">可裁</span></div>
+          </div>
+        </div>
+
+        <!-- 稿纸 -->
+        <div class="manuscript-wrap" id="msWrap">
+          <article class="manuscript">
+            <header class="ms-head">
+              <div class="crumb"><span>卷一 · 归墟夜话</span><svg class="ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg><span>第一章 破庙惊雷</span><svg class="ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg><span>场景 1 · 雷夜借宿</span></div>
+              <h1>雷夜借宿</h1>
+              <div class="ms-meta">
+                <span class="pov"><i>砚</i>视角 · 沈砚</span>
+                <span class="cast">出场<i style="background:#a16207">砚</i><i style="background:#3d6fe0">萤</i><i style="background:#c13a68">裴</i></span>
+                <span>· 3,214 字 / 目标 3,500</span>
+                <span class="status-pill sp-done">已定稿</span>
+              </div>
+            </header>
+            <div class="ms-body">
+              <p>雨是从子夜开始下的，先是瓦上碎玉般的响，后来便连成了片，像有人在头顶倾倒整条大河。</p>
+              <p>沈砚推开幕岭山道上最后一道山坳时，蓑衣已经透得彻底。他借着一线闪电望见前方的破庙——塌了半边檐角，匾额上「听雨」二字只剩个雨旁，倒应景。</p>
+              <p>庙里竟有火光。</p>
+              <p>他按住腰间的铜灯，指腹习惯性地摩挲过灯身上那<span class="sel-hl gold" id="selDemo">七道刻痕的第六道</span>——师父说过，第七道亮起之日，便是归墟开门之时。掌心的旧茧蹭过铜绿，灯没有响。</p>
+              <p>「进来吧。」庙里的人先开了口，声音隔着雨幕依然清亮，「站在檐下数雨滴，数到天亮也数不完的。」</p>
+              <p>是个少女，抱着膝坐在火堆旁，发梢还滴着水，正歪头打量他。她身侧的包袱绣着一枚极小的蓝色萤纹。</p>
+              <p class="noindent" style="text-align:center;color:var(--cp-text-tertiary);font-size:13px">… …</p>
+            </div>
+          </article>
+          <!-- 选中工具条 -->
+          <div class="sel-toolbar" id="selToolbar" role="toolbar" aria-label="选中文本 AI 操作">
+            <button data-op="续写"><svg class="ic sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>从此续写</button>
+            <button data-op="扩写"><svg class="ic sm" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>扩写</button>
+            <button data-op="描写"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3c2 4.5-2 5.5 0 10 1.5 3.4-1 5-1 5M8 7c-2 2-2 5 0 7M16 7c2 2 2 5 0 7"/></svg>补描写</button>
+            <span class="sep"></span>
+            <button data-op="改写"><svg class="ic sm" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>指令改写…</button>
+          </div>
+        </div>
+
+        <!-- 底栏 -->
+        <footer class="ms-footer">
+          <span>已自动保存 · <b>14:32</b></span>
+          <span>快照 <b>23</b> 份 · 最近：定稿第 1 章场景 1</span>
+          <span class="grow"></span>
+          <span>专注模式 <b>⌥⌘F</b></span>
+          <div class="mode"><button class="on">稿纸</button><button>对照</button></div>
+        </footer>
+      </main>
+
+      <!-- AI 伴写栏 -->
+      <aside class="panel right ai">
+        <div class="ai-head">
+          <h2><span class="live"></span>AI 伴写</h2>
+          <span class="sub">deepseek-v4 · 温度 0.8</span>
+        </div>
+        <div class="ai-actions">
+          <button id="btnContinue"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>继续写作</button>
+          <button><svg class="ic" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>扩写场景</button>
+          <button><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>强化对白</button>
+          <button><svg class="ic" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>伏笔建议</button>
+        </div>
+        <div class="ai-feed" id="aiFeed">
+          <div class="feed-day">本次会话</div>
+          <div class="chat-msg me"><span class="who">你 · 引用了「雷夜借宿」结尾</span><div class="bubble">阿萤的登场再俏皮一点，加一个和铜灯有关的小动作，为第七道刻痕埋钩子。</div></div>
+          <div class="chat-msg"><span class="who">伴写 · 基于设定库 4 条实体 + 前情链</span><div class="bubble">已按你的要求改写登场段。两个方案都让阿萤碰了铜灯——一个好奇敲灯（明钩），一个瞳孔映出刻痕（暗钩），暗钩更贴你「读者信息差」的铺法，但我保留了两个候选。</div></div>
+
+          <!-- 候选卡 -->
+          <div class="cand" id="cand1">
+            <div class="cand-head"><span class="tagc">候选 A · 明钩</span><span>412 字 · ≈0.9¢</span>
+              <span class="act"><button data-pick="cand1">换一版</button><button class="primary" data-pick="cand1">采纳</button></span></div>
+            <div class="cand-body"><p>「进来吧。」庙里的人先开了口，声音隔着雨幕依然清亮。</p><p>是个少女，抱着膝坐在火堆旁。见沈砚盯她，她非但不避，反而伸出手指，朝他腰间的铜灯虚虚一敲——「当」的一声轻响，不像敲铜，倒像敲在人的天灵盖上。</p><p>「咦，」她眨眨眼，「哑的。哑了三十年，就等到今晚一场雷？」</p></div>
+          </div>
+          <div class="cand" id="cand2">
+            <div class="cand-head"><span class="tagc" style="background:var(--cp-primary-lighter);color:var(--cp-primary)">候选 B · 暗钩</span><span>388 字 · ≈0.8¢</span>
+              <span class="act"><button data-pick="cand2">换一版</button><button class="primary" data-pick="cand2">采纳</button></span></div>
+            <div class="cand-body"><p>少女抬起头来。火光在她眼底晃了一晃，随即定住——沈砚说不上来哪里不对，直到他顺着她的视线低头，看见她瞳孔里映着的东西：</p><p>铜灯灯身上，七道刻痕的倒影。可他的灯只有六道刻痕是亮的。</p><p>「你数错了，」少女忽然笑道，「是七道。」</p></div>
+          </div>
+        </div>
+        <div class="composer">
+          <div class="box">
+            <textarea placeholder="向伴写提问，或用 @引用实体、#引用章节…" aria-label="向伴写提问"></textarea>
+            <button class="send" aria-label="发送"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+          </div>
+          <div class="hint"><span><kbd>⌘↵</kbd> 发送</span><span>长任务可随时 <b>暂停</b>，失败自动重试</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ================= 编排区 ================= -->
+    <section class="view v-plan" id="view-plan">
+      <div class="plan-toolbar">
+        <h2>编排</h2>
+        <span class="desc">同一份结构的另一种视图：卡片即章节，拖拽即重排，重排即改结构</span>
+        <div class="right">
+          <button class="ghost-btn"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建章节</button>
+          <button class="ghost-btn"><svg class="ic sm" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>大纲表</button>
+        </div>
+      </div>
+      <div class="plan-scroll">
+        <div class="plan-grid">
+          <div class="board">
+            <div class="board-head"><h3>卷一 · 归墟夜话</h3><span class="meta">4 章 · 8 场景 · 已成稿 6.8k / 计划 14k 字</span>
+              <span class="right"><span class="status-pill sp-draft">连载中</span></span></div>
+
+            <div class="ch-row">
+              <div class="row"><span class="num n-gold">01</span><span class="tt">破庙惊雷</span><span class="summ">雷夜借宿 · 铜灯初醒 —— 沈砚得灯，阿萤登场</span>
+                <div class="prog"><div class="prog-bar"><i style="width:100%"></i></div><span>6,012 字</span></div>
+                <span class="status-pill sp-done">已定稿</span><svg class="chev ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
+              <div class="beats">
+                <div class="beat"><span class="bn">1</span><div><div class="bt">雷夜借宿（已定稿 3.2k）</div><div class="bd">雨夜投庙 → 火光试探 → 初见阿萤，铜灯异动未解</div></div><span class="bc"><i style="background:#a16207">砚</i><i style="background:#3d6fe0">萤</i></span></div>
+                <div class="beat"><span class="bn">2</span><div><div class="bt">铜灯初醒（已定稿 2.8k）</div><div class="bd">第六道刻痕亮起 → 阿萤认灯不认人 → 追兵哨音收尾钩子</div></div><span class="bc"><i style="background:#a16207">砚</i><i style="background:#3d6fe0">萤</i><i style="background:#c13a68">裴</i></span></div>
+              </div>
+            </div>
+
+            <div class="ch-row open">
+              <div class="row"><span class="num n-gold">02</span><span class="tt">灯下故人</span><span class="summ">故人对饮 · 旧疤的秘密 —— 师门旧事，裴照入局</span>
+                <div class="prog"><div class="prog-bar"><i style="width:38%"></i></div><span>1,986 / 6k 字</span></div>
+                <span class="status-pill sp-draft">草稿</span><svg class="chev ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
+              <div class="beats">
+                <div class="beat"><span class="bn">1</span><div><div class="bt">故人对饮（已定稿 2.9k）</div><div class="bd">师父故友来访 → 酒后失言「归墟」二字 → 阿萤在暗处听见</div></div><span class="bc"><i style="background:#a16207">砚</i><i style="background:#3d6fe0">师</i></span></div>
+                <div class="beat"><span class="bn">2</span><div><div class="bt">旧疤的秘密（草稿 1.1k）</div><div class="bd">沈砚左臂旧疤遇灯发烫 → 闪回三年前河祭 → 首次自述「我不是第一个提灯人」</div></div><span class="bc"><i style="background:#a16207">砚</i></span></div>
+              </div>
+            </div>
+
+            <div class="ch-row">
+              <div class="row"><span class="num n-gold">03</span><span class="tt">落雁城</span><span class="summ">城门告示 · 夜探钦天监 —— 裴照正面出场</span>
+                <div class="prog"><div class="prog-bar"><i style="width:12%"></i></div><span>642 / 6k 字</span></div>
+                <span class="status-pill sp-outline">细纲</span><svg class="chev ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
+              <div class="beats">
+                <div class="beat"><span class="bn">1</span><div><div class="bt">城门告示（草稿 0.6k）</div><div class="bd">钦天监缉「妖灯」榜文 → 沈砚发现自己已被画影图形</div></div><span class="bc"><i style="background:#a16207">砚</i><i style="background:#c13a68">裴</i></span></div>
+                <div class="beat"><span class="bn">2</span><div><div class="bt">夜探钦天监（细纲）</div><div class="bd">监正密档 → 「第七位提灯人」名册 → 裴照回眸收章</div></div><span class="bc"><i style="background:#c13a68">裴</i></span></div>
+              </div>
+            </div>
+
+            <div class="ch-row">
+              <div class="row"><span class="num n-gold">04</span><span class="tt">河灯祭</span><span class="summ">万人放灯 —— 卷一收束：灯海之下，归墟初现</span>
+                <div class="prog"><div class="prog-bar"><i style="width:0%"></i></div><span>0 / 5k 字</span></div>
+                <span class="status-pill sp-outline">构想</span><svg class="chev ic sm" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
+              <div class="beats">
+                <div class="beat"><span class="bn">1</span><div><div class="bt">万人放灯（构想）</div><div class="bd">河灯祭夜，第七道刻痕亮起一瞬 —— 卷末钩子，与第 12 章伏笔回收遥相呼应</div></div><span class="bc"><i style="background:#a16207">砚</i><i style="background:#3d6fe0">萤</i></span></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- 剧情线泳道 -->
+            <div class="timeline">
+              <h3>剧情线 <span class="meta">主线 1 · 暗线 2 · 按场景落位</span></h3>
+              <div class="lane-ruler"><span></span><div class="marks"><span>1-1</span><span>1-2</span><span>2-1</span><span>2-2</span><span>3-1</span><span>3-2</span><span>4-1</span></div></div>
+              <div class="lane"><span class="ln"><i style="background:var(--cp-primary)"></i>主线 · 寻灯</span><div class="track">
+                <span class="seg seg-main" style="left:2%;width:26%"><em>得灯</em></span>
+                <span class="seg seg-main" style="left:30%;width:26%"><em>旧事</em></span>
+                <span class="seg seg-main" style="left:58%;width:24%"><em>追缉</em></span>
+                <span class="seg seg-main" style="left:84%;width:14%"><em>初现</em></span></div></div>
+              <div class="lane"><span class="ln"><i style="background:var(--cp-pink)"></i>暗线 · 裴照</span><div class="track">
+                <span class="seg seg-sub1" style="left:20%;width:12%"><em>哨</em></span>
+                <span class="seg seg-sub1" style="left:56%;width:42%"><em>缉妖入城</em></span></div></div>
+              <div class="lane"><span class="ln"><i style="background:var(--cp-gold)"></i>暗线 · 河祭</span><div class="track">
+                <span class="seg seg-sub2" style="left:34%;width:10%"><em>闪回</em></span>
+                <span class="seg seg-sub2" style="left:84%;width:14%"><em>祭夜</em></span></div></div>
+            </div>
+            <!-- 伏笔登记簿 -->
+            <div class="timeline" style="margin-bottom:0">
+              <h3>伏笔登记簿 <span class="meta">2 枚在册 · 1 枚临近回收窗口</span></h3>
+              <div class="foreshadow" style="border-top:0;padding-top:0">
+                <div class="fs-item"><span class="fsd" style="background:var(--cp-warning)"></span><div><div class="ft">铜灯第七道刻痕</div><div class="fd">埋设 1-2 · 计划回收 4-1 · 已过 2 章</div></div><span class="state fst-open">临近回收</span></div>
+                <div class="fs-item"><span class="fsd" style="background:var(--cp-border)"></span><div><div class="ft">沈砚左臂旧疤</div><div class="fd">埋设 2-2 · 计划回收 8-3 · 进展正常</div></div><span class="state fst-planted">在册</span></div>
+                <div class="fs-item"><span class="fsd" style="background:var(--cp-danger)"></span><div><div class="ft">「我不是第一个提灯人」</div><div class="fd">埋设 2-2 · 目标回收 3-2 已过 · 建议本章处理</div></div><span class="state fst-due">超期</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 设定区 ================= -->
+    <section class="view v-codex" id="view-codex">
+      <aside class="cx-side">
+        <div class="head"><h2>设定库</h2><p>被 @引用 或命中别名的实体，自动进入生成上下文</p></div>
+        <div class="cx-search"><svg class="ic sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="搜索实体、别名、标签…" aria-label="搜索实体"></div>
+        <div class="cx-list" id="cxList">
+          <div class="cx-group"><div class="g">角色<span class="cnt">3</span></div>
+            <div class="cx-item on"><span class="avatar" style="background:linear-gradient(135deg,#a16207,#6f4a00)">砚</span><div><div class="nm">沈砚</div><div class="al">别名：提灯人 · 小砚</div></div><span class="inj inj-dot" style="background:var(--cp-success)" title="总是注入"></span></div>
+            <div class="cx-item"><span class="avatar" style="background:linear-gradient(135deg,#3d6fe0,#2b4fb0)">萤</span><div><div class="nm">阿萤</div><div class="al">别名：灯灵 · 萤火</div></div><span class="inj inj-dot" style="background:var(--cp-primary-light)" title="被提及时注入"></span></div>
+            <div class="cx-item"><span class="avatar" style="background:linear-gradient(135deg,#c13a68,#8f2b52)">裴</span><div><div class="nm">裴照</div><div class="al">别名：裴监正 · 夜鸦</div></div><span class="inj inj-dot" style="background:var(--cp-primary-light)" title="被提及时注入"></span></div>
+          </div>
+          <div class="cx-group"><div class="g">地点<span class="cnt">2</span></div>
+            <div class="cx-item"><span class="avatar" style="background:linear-gradient(135deg,#6d7480,#3c414a)">雁</span><div><div class="nm">落雁城</div><div class="al">北方河畔重镇</div></div><span class="inj inj-dot" style="background:var(--cp-primary-light)"></span></div>
+            <div class="cx-item"><span class="avatar" style="background:linear-gradient(135deg,#6d7480,#3c414a)">庙</span><div><div class="nm">听雨破庙</div><div class="al">幕岭山道</div></div><span class="inj inj-dot" style="background:var(--cp-border)"></span></div>
+          </div>
+          <div class="cx-group"><div class="g">物品 · 概念<span class="cnt">2</span></div>
+            <div class="cx-item"><span class="avatar" style="background:linear-gradient(135deg,#a16207,#6f4a00)">灯</span><div><div class="nm">铜灯</div><div class="al">别名：归墟之灯</div></div><span class="inj inj-dot" style="background:var(--cp-success)"></span></div>
+            <div class="cx-item"><span class="avatar" style="background:linear-gradient(135deg,#6f5ca3,#4a3a7e)">墟</span><div><div class="nm">归墟</div><div class="al">上古水渊</div></div><span class="inj inj-dot" style="background:var(--cp-primary-light)"></span></div>
+          </div>
+        </div>
+      </aside>
+      <div class="cx-detail">
+        <article class="cx-card">
+          <div class="cx-head">
+            <span class="avatar" style="background:linear-gradient(135deg,#a16207,#6f4a00)">砚</span>
+            <div>
+              <h1>沈砚</h1>
+              <div class="role">主角 · 提灯人（第七任） · 视角人物</div>
+              <div class="aliases"><span class="alias">提灯人</span><span class="alias">小砚</span></div>
+            </div>
+            <div class="right">
+              <div class="inj-seg" role="group" aria-label="AI 上下文注入档位">
+                <button class="on" data-inj="always"><svg class="ic sm" viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>总是</button>
+                <button data-inj="mentioned">被提及时</button>
+                <button data-inj="never">从不</button>
+              </div>
+              <div class="mention-heat"><span>提及热度 · 全书 47 次</span><span class="heat-bars"><i style="height:6px"></i><i style="height:9px"></i><i style="height:7px"></i><i style="height:14px"></i><i style="height:18px"></i><i style="height:16px"></i><i style="height:11px"></i></span></div>
+            </div>
+          </div>
+          <div class="cx-fields">
+            <div class="field wide"><h2 class="fh">一句话内核 <span class="ai-tag">由设定生成 · 可改</span></h2><p>背着「不存在的第七任」名分上路的提灯人，想查清前六任怎么死的，却先查出了自己左臂里缝着的东西。</p></div>
+            <div class="field"><h2 class="fh">外貌</h2><p>二十四岁，旧蓑衣，左臂缠布；指腹有常年摩挲铜灯留下的铜绿茧。</p></div>
+            <div class="field"><h2 class="fh">性格 · 矛盾</h2><p>外冷内轴；嘴上认命，脚下认人。越怕欠情，越还不起。</p></div>
+            <div class="field"><h2 class="fh">语言习惯（口癖）</h2><p>不接话头，用动作答话；急了才冒一句师父的口头禅「灯亮之前，先看脚下」。</p></div>
+            <div class="field"><h2 class="fh">能力 · 限制</h2><p>提灯人可镇水祟，但每点一次灯，旧疤就烫一分——灯与人是同一条命。</p></div>
+            <div class="field wide"><h2 class="fh">成长弧线</h2><p>卷一「接灯即接债」→ 卷三「灯是人不是器」→ 终卷「第七道刻痕刻的是自己的名字」。</p></div>
+            <div class="field"><h2 class="fh">现状快照 · 第 3 章</h2><p>已知：自己非首任；未知：阿萤的真实来历；持有：铜灯（六道亮）。</p></div>
+            <div class="field"><h2 class="fh">禁忌 · 一致性约束</h2><p>不会主动碰水；左手伤在左臂而非左手（第 4 章审校已纠正过一次）。</p></div>
+          </div>
+          <div class="cx-rel">
+            <h2 class="sh">关系</h2>
+            <div class="rel-graph">
+              <span class="rel-pill"><b>阿萤</b><span class="arrow">←共生→</span><span class="rel-kind">灯与灵</span></span>
+              <span class="rel-pill"><b>裴照</b><span class="arrow">←追缉</span><span class="rel-kind">敌对</span></span>
+              <span class="rel-pill"><b>故人·周伯</b><span class="arrow">←授业</span><span class="rel-kind">师门</span></span>
+            </div>
+          </div>
+          <div class="cx-chapters" style="margin-top:22px">
+            <h2 class="sh">出场章节</h2>
+            <div class="chapters-used"><span class="chap-chip">1-1 雷夜借宿</span><span class="chap-chip">1-2 铜灯初醒</span><span class="chap-chip">2-1 故人对饮</span><span class="chap-chip">2-2 旧疤的秘密</span><span class="chap-chip">3-1 城门告示</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= 审阅区 ================= -->
+    <section class="view v-review" id="view-review">
+      <aside class="rv-queue">
+        <div class="head"><h2>审阅队列</h2><span class="cnt">3 项待处理</span></div>
+        <div class="rv-list">
+          <div class="rv-item on"><div class="t"><span class="kind kd-opt">优化</span>批量优化 · 2-2 旧疤的秘密</div><div class="d">自动化 · 段落级 · 4 处改动 · 14 分钟前</div></div>
+          <div class="rv-item"><div class="t"><span class="kind kd-fix">一致性</span>一致性检查 · 第 3 章</div><div class="d">发现 2 处设定冲突 · 1 小时前</div></div>
+          <div class="rv-item"><div class="t"><span class="kind kd-ai">拆书</span>拆书导入 · 《河灯祭》参考文本</div><div class="d">解析出 12 章细纲草稿 · 昨天</div></div>
+        </div>
+      </aside>
+      <div class="rv-main">
+        <div class="rv-doc">
+          <div class="head">
+            <div><h1>2-2 旧疤的秘密 · 优化审阅</h1><div class="sub">deepseek-v4（自动化）· 保留事实与视角 · 4 处段落级改动，已逐段对齐</div></div>
+            <div class="right"><button class="ghost-btn">再生成全部</button></div>
+          </div>
+          <div class="snapshot-note"><svg class="ic sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>应用前已自动创建快照「优化前 · 14:18」，可随时回退</div>
+          <div class="diff">
+            <div class="diff-head"><svg class="ic sm" viewBox="0 0 24 24"><path d="M16 3h5v5M8 21H3v-5M21 3l-7 7M3 21l7-7"/></svg>段落级 Diff<span class="sum"><span class="add">+3 段</span><span class="del">−4 段</span><span>采纳 <b id="acceptCount">2</b>/4</span></span></div>
+
+            <div class="hunk accepted" data-hunk>
+              <div class="hunk-meta"><span class="no">改动 1 / 4</span><span>感官细节 · 铜绿茧的触感由「讲述」改为「动作」</span>
+                <span class="right"><button class="yes" data-accept>✓ 采纳</button><button class="no-btn" data-reject>保留原文</button></span></div>
+              <p class="old">沈砚的左臂又开始发烫了，这是铜灯带来的老毛病，每次点灯之后都会这样。</p>
+              <p class="new">灯芯未灭，烫意便顺着左臂的旧疤一寸寸爬。沈砚把袖口往下拽了拽——铜绿的凉，压不住皮肉底的烫。</p>
+            </div>
+
+            <div class="hunk accepted" data-hunk>
+              <div class="hunk-meta"><span class="no">改动 2 / 4</span><span>节奏 · 合并两个短段，收紧闪回切出的顿挫</span>
+                <span class="right"><button class="yes" data-accept>✓ 采纳</button><button class="no-btn" data-reject>保留原文</button></span></div>
+              <p class="old">他忽然想起三年前的河祭。那晚的灯也很多。</p>
+              <p class="new">三年前河祭的灯，也是这样多的，多得像要把整条河烧穿。那晚之后他学会了一件事：灯越多，水底下醒着的东西越饿。</p>
+            </div>
+
+            <div class="hunk keep" data-hunk>
+              <div class="hunk-meta"><span class="no">改动 3 / 4</span><span>对白 · 模型建议替换整段自述</span>
+                <span class="right"><button class="yes" data-accept>✓ 采纳</button><button class="no-btn" data-reject>保留原文</button></span></div>
+              <p class="old">「我不是第一个提灯人。」他说，「我是第七个。前面六个，都没能活着把灯传下去。」</p>
+              <p class="new">「师父收我那日，祠堂里挂着六盏灭灯。」他顿了顿，「他是想让我做第七盏——也没打算让我活着。」</p>
+            </div>
+
+            <div class="hunk rejected keep" data-hunk>
+              <div class="hunk-meta"><span class="no">改动 4 / 4</span><span>结尾钩子 · 与已定稿的 3-1 告示内容冲突，模型误判</span>
+                <span class="right"><button class="yes" data-accept>✓ 采纳</button><button class="no-btn" data-reject>保留原文</button></span></div>
+              <p class="old">阿萤在梁上坐直了，眼睛亮得吓人。</p>
+              <p class="new">阿萤从梁上跳下来，一把按住铜灯——「它认我了。」</p>
+            </div>
+          </div>
+
+          <!-- 一致性检查 -->
+          <div class="consist">
+            <div class="head"><svg class="ic sm" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg><h2 class="cs-t">一致性检查 · 第 3 章</h2><span class="meta">对照设定库 7 条实体 + 时间线</span><span class="badge">2 处待处理</span></div>
+            <div class="finding"><span class="sev sev-hi"></span><div><div class="ft">伤情方位矛盾：沈砚的伤在「左手」，设定库记录为「左臂」</div><div class="fd">3-1 第 4 段：「他左手缠着布」；设定库（第 4 章审校已确认）：旧疤在左臂内侧。</div></div><button class="go">跳到原文 <svg class="ic sm" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></button></div>
+            <div class="finding"><span class="sev sev-md"></span><div><div class="ft">阿萤在 2-1 已随周伯离城，本章再次出场未交代归队</div><div class="fd">场景卡出场角色含「阿萤」，但 2-1 结尾写明「随周伯先行三日」。建议补一句归队缘由。</div></div><button class="go">跳到原文 <svg class="ic sm" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+// ---------- 主题 ----------
+const root = document.documentElement;
+document.getElementById('themeBtn').addEventListener('click', () => {
+  root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+});
+
+// ---------- 视图导航：书架 → 开书向导 → 工作台 ----------
+function showView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === id));
+}
+function enterBook(view = 'view-write', nav = 'write'){
+  document.body.classList.add('in-book');
+  showView(view);
+  document.querySelectorAll('#wsNav button').forEach(b => b.classList.toggle('on', b.dataset.view === nav));
+}
+function goHome(){
+  document.body.classList.remove('in-book');
+  showView('view-home');
+}
+document.getElementById('wsNav').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-view]');
+  if (!btn) return;
+  document.querySelectorAll('#wsNav button').forEach(b => b.classList.toggle('on', b === btn));
+  showView('view-' + btn.dataset.view);
+});
+document.getElementById('btnBackHome').addEventListener('click', goHome);
+document.getElementById('btnNewBook').addEventListener('click', () => showView('view-init'));
+document.getElementById('btnNewBookShelf').addEventListener('click', () => showView('view-init'));
+document.getElementById('btnInitBack').addEventListener('click', goHome);
+document.getElementById('btnImportHome').addEventListener('click', () => {
+  showView('view-init');
+  document.querySelectorAll('#initModes .mode-card').forEach(b => b.classList.toggle('on', b.dataset.mode === 'import'));
+  document.getElementById('pane-tpl').style.display = 'none';
+  document.getElementById('pane-fields').style.display = 'none';
+  document.getElementById('pane-import').style.display = '';
+});
+document.querySelectorAll('[data-open-book]').forEach(card => {
+  card.addEventListener('click', () => enterBook('view-write', 'write'));
+});
+document.getElementById('btnCreate').addEventListener('click', () => enterBook('view-codex', 'codex'));
+document.getElementById('initModes').addEventListener('click', e => {
+  const btn = e.target.closest('.mode-card');
+  if (!btn) return;
+  document.querySelectorAll('#initModes .mode-card').forEach(b => b.classList.toggle('on', b === btn));
+  document.getElementById('pane-tpl').style.display = btn.dataset.mode === 'tpl' ? '' : 'none';
+  document.getElementById('pane-import').style.display = btn.dataset.mode === 'import' ? '' : 'none';
+  document.getElementById('pane-fields').style.display = btn.dataset.mode === 'import' ? 'none' : '';
+});
+document.getElementById('tplGrid').addEventListener('click', e => {
+  const chip = e.target.closest('.tpl-chip');
+  if (!chip) return;
+  document.querySelectorAll('#tplGrid .tpl-chip').forEach(b => b.classList.toggle('on', b === chip));
+});
+
+// ---------- 结构树 ----------
+document.getElementById('tree').addEventListener('click', e => {
+  const sc = e.target.closest('.sc');
+  if (sc) {
+    document.querySelectorAll('.tree .sc').forEach(s => s.classList.toggle('on', s === sc));
+    return;
+  }
+  const ch = e.target.closest('.ch-head');
+  if (ch) { ch.parentElement.classList.toggle('open'); return; }
+  const vol = e.target.closest('.vol-head');
+  if (vol) vol.parentElement.classList.toggle('open');
+});
+
+// ---------- 上下文浮层 ----------
+const ctxPop = document.getElementById('ctxPop');
+document.getElementById('ctxToggle').addEventListener('click', e => {
+  e.stopPropagation();
+  ctxPop.classList.toggle('on');
+});
+ctxPop.addEventListener('click', e => e.stopPropagation());
+document.addEventListener('click', () => ctxPop.classList.remove('on'));
+
+// ---------- 注入档位切换 ----------
+document.querySelectorAll('.inj-seg').forEach(seg => {
+  seg.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === btn));
+  });
+});
+
+// ---------- 选中工具条（演示 + 真实选区） ----------
+const toolbar = document.getElementById('selToolbar');
+const wrap = document.getElementById('msWrap');
+function showToolbar(rect) {
+  toolbar.classList.add('on');
+  const wrapRect = wrap.getBoundingClientRect();
+  toolbar.style.left = Math.min(Math.max(rect.left + rect.width / 2 - 150, wrapRect.left + 12), wrapRect.right - 312) + 'px';
+  toolbar.style.top = (rect.top - wrapRect.top + wrap.scrollTop - 44) + 'px';
+}
+const demo = document.getElementById('selDemo');
+demo.addEventListener('click', () => showToolbar(demo.getBoundingClientRect()));
+document.addEventListener('selectionchange', () => {
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed || !wrap.contains(sel.anchorNode)) { toolbar.classList.remove('on'); return; }
+  showToolbar(sel.getRangeAt(0).getBoundingClientRect());
+});
+toolbar.addEventListener('click', e => {
+  const op = e.target.closest('button')?.dataset.op;
+  if (!op) return;
+  toolbar.classList.remove('on');
+  runContinue(`已按「${op}」处理选中文本 · 结果以候选卡呈现`);
+});
+
+// ---------- 多候选 ----------
+const feed = document.getElementById('aiFeed');
+const STREAM_TEXT = [
+  '雨幕里忽然炸开一声闷雷。阿萤抱着膝的手指蜷了蜷，火光把她的影子钉在墙上，一动不动。',
+  '「你说，」她忽然开口，声音轻得像怕惊了灯，「提灯的人死了，灯会替他记多久？」',
+  '沈砚没有答。铜灯在他掌心极轻地震了一下，像有个字，含在喉咙里没能说出口。'
+];
+let streaming = false;
+function typeInto(el, paragraphs, done) {
+  streaming = true;
+  el.innerHTML = '';
+  let pi = 0, ci = 0;
+  const caret = document.createElement('span'); caret.className = 'stream-caret';
+  function step() {
+    if (pi >= paragraphs.length) { caret.remove(); streaming = false; done && done(); return; }
+    if (ci === 0) { el.appendChild(document.createElement('p')); el.lastChild.appendChild(caret); }
+    const p = el.lastChild;
+    const chunk = paragraphs[pi].slice(ci, ci + 3);
+    p.insertBefore(document.createTextNode(chunk), caret);
+    ci += 3;
+    if (ci >= paragraphs[pi].length) { pi++; ci = 0; }
+    feed.scrollTop = feed.scrollHeight;
+    setTimeout(step, 26);
+  }
+  step();
+}
+document.getElementById('btnContinue').addEventListener('click', () => {
+  if (streaming) return;
+  runContinue('继续写作 · 生成 2 个候选');
+});
+function runContinue(label) {
+  const c1 = document.getElementById('cand1'), c2 = document.getElementById('cand2');
+  [c1, c2].forEach(c => { c.classList.remove('picked', 'dim'); });
+  c1.querySelector('.cand-head .tagc').textContent = label.split('·')[0].trim() + ' · 生成中';
+  c2.style.display = 'none';
+  typeInto(c1.querySelector('.cand-body'), STREAM_TEXT, () => {
+    c1.querySelector('.cand-head .tagc').textContent = label;
+    c2.style.display = '';
+    c2.querySelector('.cand-body').innerHTML = STREAM_TEXT.map(t => `<p>${t.slice(0, 40)}…（另一走向：让阿萤先开口问灯，把钩子挂在她身上）</p>`).join('');
+    feed.scrollTop = feed.scrollHeight;
+  });
+}
+feed.addEventListener('click', e => {
+  const btn = e.target.closest('[data-pick]');
+  if (!btn) return;
+  const id = btn.dataset.pick;
+  document.querySelectorAll('.cand').forEach(c => {
+    c.classList.toggle('picked', c.id === id);
+    c.classList.toggle('dim', c.id !== id);
+  });
+  const picked = document.getElementById(id);
+  if (btn.textContent === '采纳') {
+    const head = picked.querySelector('.cand-head .act');
+    head.innerHTML = '<span class="picked-mark"><svg class="ic sm" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>已采纳进稿件 · 快照已存</span>';
+  }
+});
+
+// ---------- Diff 逐段采纳 ----------
+const acceptCount = document.getElementById('acceptCount');
+document.querySelectorAll('[data-hunk]').forEach(hunk => {
+  hunk.addEventListener('click', e => {
+    const yes = e.target.closest('[data-accept]');
+    const no = e.target.closest('[data-reject]');
+    if (yes) { hunk.classList.add('accepted'); hunk.classList.remove('rejected', 'keep'); }
+    if (no) { hunk.classList.add('rejected'); hunk.classList.remove('accepted'); hunk.classList.add('keep'); }
+    acceptCount.textContent = document.querySelectorAll('.hunk.accepted').length;
+  });
+});
+
+// ---------- 编排区章节展开 ----------
+document.querySelectorAll('.ch-row .row').forEach(row => {
+  row.addEventListener('click', () => row.parentElement.classList.toggle('open'));
+});
+
+// ---------- 设定库切换（演示：仅切换选中态） ----------
+document.getElementById('cxList').addEventListener('click', e => {
+  const item = e.target.closest('.cx-item');
+  if (!item) return;
+  document.querySelectorAll('.cx-item').forEach(i => i.classList.toggle('on', i === item));
+});
+</script>
+</body>
+</html>

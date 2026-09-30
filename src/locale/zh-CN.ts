@@ -1,0 +1,57 @@
+// 文案集中管理（选型 §2：首版仅中文，为 i18n 留缝不做运行时 i18n）
+export const zhCN = {
+  app: {
+    name: 'Mira Novel Studio',
+  },
+  nav: {
+    write: '写作',
+    plan: '编排',
+    codex: '设定',
+    review: '审阅',
+  },
+  shelf: {
+    title: '书架',
+    newBook: '新建作品',
+    import: '导入 TXT / JSON',
+    newCard: '从模板或空白开一本新书',
+    empty: '书架还是空的，从一本新书开始',
+  },
+  status: {
+    idea: '构想',
+    outline: '大纲阶段',
+    draft: '草稿',
+    done: '已定稿',
+    serial: '连载中',
+  } as Record<string, string>,
+  wizard: {
+    title: '开一本新书',
+    back: '返回书架',
+    create: '创建并进入工作台',
+    modeTpl: '从模板开始',
+    modeBlank: '空白作品',
+    modeImport: '导入已有作品',
+    tplTitle: '题材模板',
+    infoTitle: '基本信息',
+    fieldTitle: '书名',
+    fieldLength: '目标篇幅',
+    fieldCore: '一句话内核',
+    fieldPov: '叙事视角',
+    fieldModel: '创作模型',
+    createNote: '创建后先进入「设定区」，模板实体就位后随时可调',
+    dropTitle: '拖入 TXT 或项目 JSON，或点击选择文件',
+    dropNote: 'TXT 按章回自动分章并生成细纲草稿 · JSON 完整恢复作品（M4 接入）',
+  },
+  workbench: {
+    saveScene: '保存场景',
+    saved: '已保存',
+    sceneTarget: '目标 {n} 字',
+    aiPlaceholder: 'AI 伴写栏在 M1 后半接入：续写 / 扩写 / 多候选 / 中断重试',
+    reviewPlaceholder: '审阅队列在 M2 接入：diff 逐段采纳 · 一致性检查 · 快照回滚',
+    planPlaceholder: '编排视图（卡片板 / 剧情线泳道）在 M1 后半实现，当前为数据只读视图',
+    codexReadonly: '设定库编辑在 M1 后半实现，当前为只读视图',
+  },
+  common: {
+    untitled: '未命名作品',
+    wordCount: '{n} 字',
+  },
+} as const

@@ -1,0 +1,35 @@
+{
+  "name": "mira-novel-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mira Novel Studio —— AI 长篇小说创作工作台（Mira 宿主的 wujie 微应用，纯渲染层）",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.121",
+    "@iconify/vue": "^5.0.1",
+    "element-plus": "^2.14.2",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.13",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "sass": "^1.101.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0",
+    "vitest": "^3.2.7",
+    "vue-tsc": "^2.2.0"
+  }
+}

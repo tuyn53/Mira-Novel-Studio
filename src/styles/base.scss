@@ -1,0 +1,66 @@
+// 应用基础样式：仅承载全局复位与 Element Plus 主题衔接，业务样式写在各组件内
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-family;
+  font-size: $font-sm;
+  line-height: 1.5;
+  color: var(--cp-text);
+  background: var(--cp-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  min-height: 100vh;
+  background: var(--cp-bg);
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cp-border);
+  border-radius: $radius-sm;
+
+  &:hover {
+    background: var(--cp-text-tertiary);
+  }
+}
+
+// Element Plus 暗色变量挂在 html.dark 上（其自带 css-vars 的选择器约定），
+// 主题切换时同时设置 data-theme（--cp 令牌）与 dark class（EP 变量），见 stores/workspace.ts
+html.dark {
+  --el-bg-color: var(--cp-bg-elevated);
+  --el-bg-color-overlay: var(--cp-bg-overlay);
+  --el-border-color: var(--cp-border);
+  --el-border-color-light: var(--cp-border-light);
+  --el-text-color-primary: var(--cp-text);
+  --el-text-color-regular: var(--cp-text-secondary);
+  --el-fill-color-blank: var(--cp-bg);
+  --el-fill-color-light: var(--cp-bg-hover);
+  color-scheme: dark;
+}
+
+// Element Plus 主色对齐宿主令牌
+:root {
+  --el-color-primary: var(--cp-primary);
+  --el-color-primary-light-3: var(--cp-primary-hover);
+  --el-color-primary-light-9: var(--cp-primary-lighter);
+  --el-border-radius-base: #{$radius-md};
+}
