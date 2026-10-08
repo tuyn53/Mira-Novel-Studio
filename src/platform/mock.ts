@@ -31,7 +31,7 @@ function seedProject(): NovelProjectDocumentV2 {
       pov: '第三人称限知（单视角）',
       targetLength: '60 万字（标准长篇）',
     },
-    cover: defaultCover('提灯照河山'),
+    cover: { ...defaultCover('提灯照河山'), template: 'ink' },
     volumes: [
       {
         id: 'vol-1',
@@ -240,7 +240,7 @@ function seedOutlineProject(): NovelProjectDocumentV2 {
       tags: ['古代'],
       coreIdea: '天宝年间的大理寺评事，接手一桩卷宗里被反复撕掉的案子。',
     },
-    cover: defaultCover('雾起长安'),
+    cover: { ...defaultCover('雾起长安'), template: 'night' },
     volumes: [],
     entities: [],
     foreshadows: [],

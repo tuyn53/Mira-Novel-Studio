@@ -24,8 +24,8 @@ CI 门禁即上述三条命令（`.github/workflows/ci.yml`）。
 src/
 ├─ domain/            纯 TS 领域模块（无 DOM，vitest 覆盖）
 │  ├─ model.ts             数据契约 v2：卷→章→场景 + 实体库 + 封面 + 快照（宿主共同契约）
-│  ├─ cover.ts             默认书名封面：色板由书名哈希稳定生成
-│  ├─ taxonomy.ts          开书选题：频道 → 主分类 → 标签组（标签驱动生成预设）
+│  ├─ cover.ts             封面：色板哈希 + 9 套模板封面清单（对标番茄模板封面）
+│  ├─ taxonomy.ts          开书选题：频道 → 主分类 → 标签组（470 个标签全量转载番茄，数据见 taxonomy-data.ts）
 │  ├─ context/             上下文组装器：分层优先级 + token 预算裁剪
 │  ├─ generation/          伴写生成服务：prompt 组装（复用上下文分层）+ 多候选并行
 │  ├─ review/              审阅 diff：段落级对齐（M2 审阅流基础）

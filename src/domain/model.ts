@@ -117,7 +117,7 @@ export interface ProjectMeta {
 export type CoverKind = 'title' | 'image'
 
 export interface ProjectCover {
-  /** title=默认书名封面（零素材）；image=上传或 AI 生成的图片 */
+  /** title=默认书名封面（零素材，可叠加模板样式）；image=上传或 AI 生成的图片 */
   kind: CoverKind
   /** kind='image'：宿主资源 id；图片二进制存宿主应用数据目录，项目文档只存引用 */
   assetId?: string
@@ -125,6 +125,8 @@ export interface ProjectCover {
   origin?: 'upload' | 'ai'
   /** kind='title'：书名封面色板索引，由书名哈希稳定生成（换设备颜色不变） */
   palette?: number
+  /** kind='title'：封面模板 id（见 domain/cover.ts COVER_TEMPLATES，对标番茄模板封面） */
+  template?: string
 }
 
 export interface NovelProjectDocumentV2 {

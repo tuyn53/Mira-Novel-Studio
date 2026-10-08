@@ -17,7 +17,7 @@
 
     <div v-loading="shelfLoading" class="cards">
       <button v-for="p in projects" :key="p.id" class="book-card" type="button" @click="router.push(`/book/${p.id}/write`)">
-        <span class="cover" :class="coverPaletteClass(p.cover, p.title)"><i class="cv-t">{{ p.title }}</i></span>
+        <CoverArt class="cover" :title="p.title" :cover="p.cover" />
         <span class="body">
           <span class="row">
             <strong>{{ p.title }}</strong>
@@ -36,8 +36,8 @@
 import { Icon } from '@iconify/vue'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import CoverArt from '@/components/CoverArt.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
-import { coverPaletteClass } from '@/domain/cover'
 import { useWorkspaceStore } from '@/stores/workspace'
 import { formatDate, formatWords } from '@/utils/format'
 
@@ -115,28 +115,10 @@ onMounted(() => void store.loadProjects())
   }
 
   .cover {
-    display: grid;
-    place-items: center;
     flex: 0 0 auto;
     width: 76px;
     height: 100px;
-    padding: 11px;
     border-radius: 10px;
-    color: #fff;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset -14px 0 24px rgba(0, 0, 0, 0.18);
-
-    .cv-t {
-      width: 2em;
-      color: #fff;
-      font-family: var(--font-serif);
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 600;
-      line-height: 1.5;
-      text-align: center;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-      word-break: break-all;
-    }
   }
 
   .body {
