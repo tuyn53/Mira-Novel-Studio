@@ -1,7 +1,7 @@
 import type { PlatformApi } from './types'
 import { mockPlatform } from './mock'
 
-export type { CreateProjectInput, GenerationRequest, GenerationSink, ModelRole, PlatformApi, StudioPreferences, ThemePreference } from './types'
+export type { CreateProjectInput, GenerationRequest, GenerationSink, ModelRole, PlatformApi, SnapshotInput, StudioPreferences, ThemePreference } from './types'
 
 /**
  * 平台解析：宿主 preload 注入 window.__MIRA_PLATFORM__ 时直接使用；

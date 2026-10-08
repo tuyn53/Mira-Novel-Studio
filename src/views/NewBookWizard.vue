@@ -59,6 +59,28 @@
           </el-select>
         </div>
       </div>
+
+      <h2 class="sec-t">封面</h2>
+      <div class="cover-row">
+        <div class="cover-preview" :class="previewPalette">
+          <span class="cover-title">{{ form.title.trim() || '未命名作品' }}</span>
+        </div>
+        <div class="cover-modes">
+          <button class="cover-mode on" type="button" @click="coverMode = 'title'">
+            <b>默认书名封面</b>
+            <span>色板随书名稳定生成 · 不需要素材，书架自然整齐</span>
+          </button>
+          <button class="cover-mode" type="button" :disabled="true" :class="{ on: coverMode === 'upload' }">
+            <b>上传图片并裁剪 <i class="soon">M4</i></b>
+            <span>3:4 比例 · 拖拽调整构图，可随时重新裁剪或移除（规划中）</span>
+          </button>
+          <button class="cover-mode" type="button" :disabled="true">
+            <b>AI 生成封面 <i class="soon">规划中</i></b>
+            <span>按题材与一句话内核生成封面图（M4+ 计划，本期仅留入口）</span>
+          </button>
+          <p class="cover-hint">封面会出现在书架卡片、工作台标题区与导出 EPUB 的封面首图</p>
+        </div>
+      </div>
     </template>
 
     <div class="init-actions">
@@ -73,8 +95,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { ElMessage } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { coverPaletteFor } from '@/domain/cover'
 import { useWorkspaceStore } from '@/stores/workspace'
 
 const t = useWorkspaceStore().t
@@ -109,6 +132,10 @@ const form = reactive({
 })
 const creating = ref(false)
 
+// 封面：默认书名封面（色板随书名稳定生成）；上传裁剪与 AI 生成在 M4 计划（见设计方案 §4.5）
+const coverMode = ref<'title' | 'upload' | 'ai'>('title')
+const previewPalette = computed(() => `cover-palette-${coverPaletteFor(form.title.trim() || '未命名作品')}`)
+
 async function create() {
   if (!form.title.trim()) {
     ElMessage.warning('先给作品起个名字')
@@ -116,7 +143,10 @@ async function create() {
   }
   creating.value = true
   try {
-    const project = await store.createProject({ ...form })
+    const project = await store.createProject({
+      ...form,
+      cover: { kind: 'title', palette: coverPaletteFor(form.title.trim()) },
+    })
     ElMessage.success(`《${project.title}》已创建`)
     await router.push(`/book/${project.id}/codex`)
   } finally {
@@ -252,5 +282,107 @@ async function create() {
     color: var(--cp-text-tertiary);
     font-size: 11.5px;
   }
+}
+
+// ---- 封面区 ----
+.cover-row {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 26px;
+}
+
+.cover-preview {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 118px;
+  height: 157px;
+  padding: 13px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    inset -18px 0 30px rgba(0, 0, 0, 0.18),
+    $shadow-md;
+  transition: background 0.25s ease;
+
+  .cover-title {
+    width: 2em;
+    color: #fff;
+    font-family: var(--font-serif);
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: center;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    word-break: break-all;
+  }
+}
+
+.cover-modes {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.cover-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 11px 14px;
+  color: inherit;
+  text-align: left;
+  background: var(--cp-bg-elevated);
+  border: 1px solid var(--cp-border);
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+
+  b {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  span {
+    color: var(--cp-text-tertiary);
+    font-size: 11.5px;
+  }
+
+  &:not(:disabled):hover {
+    border-color: var(--cp-text-tertiary);
+  }
+
+  &.on {
+    background: var(--cp-primary-lighter);
+    border-color: var(--cp-primary);
+    box-shadow: 0 0 0 1px var(--cp-primary);
+  }
+
+  &:disabled {
+    opacity: 0.62;
+    cursor: not-allowed;
+  }
+
+  .soon {
+    padding: 1px 6px;
+    color: var(--cp-gold);
+    background: var(--cp-gold-soft);
+    border-radius: 4px;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 600;
+  }
+}
+
+.cover-hint {
+  margin-top: 2px;
+  color: var(--cp-text-tertiary);
+  font-size: 11px;
 }
 </style>

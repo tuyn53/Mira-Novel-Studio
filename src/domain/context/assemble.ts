@@ -25,6 +25,8 @@ export interface AssembledLayer {
   tokens: number
   content: string
   trimmed: boolean
+  /** 固定层：超预算也不裁剪（透传自 ContextLayer） */
+  fixed?: boolean
 }
 
 export interface AssembledContext {

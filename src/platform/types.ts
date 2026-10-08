@@ -4,7 +4,7 @@
 // 数据/密钥/文件能力一律归宿主（选型定案 §1），渲染层不得绕过此接口。
 // ============================================================
 
-import type { Entity, NovelProjectDocumentV2, NovelProjectSummary, Scene } from '@/domain/model'
+import type { Entity, NovelProjectDocumentV2, NovelProjectSummary, ProjectCover, Scene } from '@/domain/model'
 
 export interface CreateProjectInput {
   title: string
@@ -13,6 +13,8 @@ export interface CreateProjectInput {
   coreIdea?: string
   pov?: string
   targetLength?: string
+  /** 开书封面：默认书名封面；上传/AI 在 M4 计划（见设计方案 §4.5） */
+  cover?: ProjectCover
 }
 
 export type ThemePreference = 'light' | 'dark' | 'system'
@@ -32,12 +34,22 @@ export interface GenerationRequest {
 
 export type GenerationSink = (chunk: string) => void
 
+/** AI 应用前的自动快照（审阅流与回收站语义的地基，见设计方案 §4.4） */
+export interface SnapshotInput {
+  projectId: string
+  targetType: 'scene' | 'chapter' | 'project'
+  targetId: string
+  reason: 'manual' | 'ai-apply' | 'auto'
+  content: string
+}
+
 export interface PlatformApi {
   listProjects(): Promise<NovelProjectSummary[]>
   getProject(projectId: string): Promise<NovelProjectDocumentV2>
   createProject(input: CreateProjectInput): Promise<NovelProjectDocumentV2>
   saveScene(projectId: string, scene: Scene): Promise<void>
   saveEntity(projectId: string, entity: Entity): Promise<void>
+  createSnapshot(input: SnapshotInput): Promise<{ id: string }>
   getPreferences(): Promise<StudioPreferences>
   savePreferences(preferences: StudioPreferences): Promise<StudioPreferences>
   /** 模型流式生成：经宿主本地 SSE 代理转发到用户配置的 OpenAI 兼容供应商 */

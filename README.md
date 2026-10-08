@@ -23,19 +23,24 @@ CI 门禁即上述三条命令（`.github/workflows/ci.yml`）。
 ```
 src/
 ├─ domain/            纯 TS 领域模块（无 DOM，vitest 覆盖）
-│  ├─ model.ts             数据契约 v2：卷→章→场景 + 实体库 + 快照（宿主共同契约）
+│  ├─ model.ts             数据契约 v2：卷→章→场景 + 实体库 + 封面 + 快照（宿主共同契约）
+│  ├─ cover.ts             默认书名封面：色板由书名哈希稳定生成
 │  ├─ context/             上下文组装器：分层优先级 + token 预算裁剪
+│  ├─ generation/          伴写生成服务：prompt 组装（复用上下文分层）+ 多候选并行
 │  ├─ review/              审阅 diff：段落级对齐（M2 审阅流基础）
 │  └─ ingest/              定稿摄取提案（M3，契约先行）
 ├─ platform/          平台边界
 │  ├─ types.ts             PlatformApi 契约（宿主 preload 注入 window.__MIRA_PLATFORM__）
-│  ├─ mock.ts              Mock 实现（种子项目《提灯照河山》，脱离宿主可跑）
+│  ├─ mock.ts              Mock 实现（种子项目《提灯照河山》+ 演示范文库，脱离宿主可跑）
 │  └─ wujie.ts             wujie 生命周期（零改造 + unmount 清理）
-├─ stores/            Pinia：书架 / 当前作品 / 主题（业务数据不过 Pinia 持久化）
+├─ stores/            Pinia：书架 / 当前作品 / 主题 / 伴写会话
+├─ components/
+│  ├─ write/               写作区组件：WriteEditor（Milkdown 富文本 + 纯文本）、AiPanel（多候选）
+│  └─ ThemeToggle.vue
 ├─ router/            hash 路由：书架 → 向导 → /book/:id/:section
-├─ views/             书架、开书向导、工作台（写作/编排/设定/审阅四区骨架）
+├─ views/             书架、开书向导（含封面选择）、工作台（写作/编排/设定/审阅）
 ├─ locale/zh-CN.ts    文案集中（首版仅中文）
-└─ styles/            tokens.scss（复制自 Harness@0.0.10）+ base.scss + scss-vars.scss
+└─ styles/            tokens.scss（书卷暖色）+ covers.scss（封面调色板）+ base.scss
 ```
 
 ## 与宿主的边界

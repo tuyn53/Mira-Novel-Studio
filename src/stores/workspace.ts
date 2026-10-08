@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { getPlatformApi } from '@/platform'
 import type { StudioPreferences, ThemePreference } from '@/platform'
-import type { NovelProjectDocumentV2, NovelProjectSummary, Scene } from '@/domain/model'
+import type { NovelProjectDocumentV2, NovelProjectSummary, ProjectCover, Scene } from '@/domain/model'
 import { zhCN } from '@/locale/zh-CN'
 
 /**
@@ -65,7 +65,7 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     }
   }
 
-  async function createProject(input: { title: string; templateId?: string; coreIdea?: string; pov?: string; targetLength?: string }) {
+  async function createProject(input: { title: string; templateId?: string; coreIdea?: string; pov?: string; targetLength?: string; cover?: ProjectCover }) {
     const project = await api.createProject(input)
     await loadProjects()
     return project

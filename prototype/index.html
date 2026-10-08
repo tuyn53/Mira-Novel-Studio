@@ -486,14 +486,17 @@ body:not(.in-book) .tb-book{display:none}
 }
 .book-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--cp-border)}
 .book-card .cover{
-  display:grid;place-items:center;width:84px;height:112px;border-radius:10px;flex:0 0 auto;
-  color:#fff;font-family:var(--font-serif);font-size:30px;font-weight:600;position:relative;overflow:hidden;
+  display:grid;place-items:center;width:84px;height:112px;border-radius:10px;flex:0 0 auto;padding:12px;
+  color:#fff;font-family:var(--font-serif);font-weight:600;position:relative;overflow:hidden;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),inset -16px 0 26px rgba(0,0,0,.18);
   text-shadow:0 1px 4px rgba(0,0,0,.3);
 }
+.book-card .cover .cv-t{width:2em;font-size:15px;font-style:normal;line-height:1.5;word-break:break-all}
 .cv-gold{background:linear-gradient(160deg,#8a5306,#4a2e00)}
 .cv-blue{background:linear-gradient(160deg,#2f5fd0,#1d3a85)}
 .cv-rose{background:linear-gradient(160deg,#c13a68,#7e2145)}
+.cv-forest{background:linear-gradient(160deg,#2f6d4f,#183f2c)}
+.cv-plum{background:linear-gradient(160deg,#6f4a9e,#3f2a63)}
 .bc-body{display:flex;min-width:0;flex:1;flex-direction:column;gap:5px}
 .bc-top{display:flex;align-items:center;gap:9px}
 .bc-top .bt{font-family:var(--font-serif);font-size:16px;font-weight:600}
@@ -535,6 +538,36 @@ textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-heigh
 .drop span{font-size:11.5px}
 .init-actions{display:flex;align-items:center;gap:14px}
 .init-note{color:var(--cp-text-tertiary);font-size:11.5px}
+.cover-row{display:flex;gap:18px;align-items:flex-start;margin-bottom:26px}
+.cover-preview{
+  position:relative;display:grid;place-items:center;flex:0 0 auto;width:128px;height:170px;padding:13px;
+  color:#fff;border-radius:10px;overflow:hidden;font-family:var(--font-serif);font-weight:600;text-align:center;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),inset -18px 0 30px rgba(0,0,0,.18),var(--shadow-md);
+  transition:background .25s var(--ease-out);
+}
+.cover-preview .cover-title{width:2em;font-size:15px;line-height:1.5;word-break:break-all;text-shadow:0 1px 4px rgba(0,0,0,.3)}
+.cover-preview .cover-slot{display:none;place-items:center;gap:3px;color:rgba(255,255,255,.82)}
+.cover-preview .cover-slot b{font-family:var(--font-ui);font-size:12px;font-weight:600}
+.cover-preview .cover-slot span{font-family:var(--font-ui);font-size:10px;opacity:.75}
+.cover-preview.upload-mode{background:linear-gradient(160deg,#3d4048,#23252a)}
+.cover-preview.upload-mode .cover-title{display:none}
+.cover-preview.upload-mode .cover-slot{display:grid}
+.crop-frame{display:none;position:absolute;inset:14px;border:1px solid rgba(255,255,255,.9);pointer-events:none}
+.cover-preview.upload-mode .crop-frame{display:block}
+.crop-frame i{position:absolute;width:12px;height:12px;border:0 solid #fff}
+.crop-frame .c-tl{top:-1px;left:-1px;border-top-width:3px;border-left-width:3px}
+.crop-frame .c-tr{top:-1px;right:-1px;border-top-width:3px;border-right-width:3px}
+.crop-frame .c-bl{bottom:-1px;left:-1px;border-bottom-width:3px;border-left-width:3px}
+.crop-frame .c-br{bottom:-1px;right:-1px;border-bottom-width:3px;border-right-width:3px}
+.cover-modes{display:flex;flex:1;min-width:0;flex-direction:column;gap:9px}
+.cover-mode{display:flex;flex-direction:column;gap:3px;padding:11px 14px;text-align:left;background:var(--cp-bg-elevated);border:1px solid var(--cp-border);border-radius:var(--radius-md);transition:all .15s var(--ease-out)}
+.cover-mode b{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600}
+.cover-mode span{color:var(--cp-text-tertiary);font-size:11.5px}
+.cover-mode:not(:disabled):hover{border-color:var(--cp-text-tertiary)}
+.cover-mode.on{border-color:var(--cp-primary);background:var(--cp-primary-contrast);box-shadow:0 0 0 1px var(--cp-primary)}
+.cover-mode:disabled{cursor:not-allowed;opacity:.62}
+.soon{font-style:normal;padding:1px 6px;color:var(--cp-gold);background:var(--cp-gold-soft);border-radius:4px;font-size:10px;font-weight:600}
+.cover-hint{margin-top:2px;color:var(--cp-text-tertiary);font-size:11px}
 
 @media (max-width:1280px){
   .v-write{grid-template-columns:210px minmax(0,1fr) 300px}
@@ -583,7 +616,7 @@ textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-heigh
           </header>
           <div class="shelf">
             <button class="book-card" data-open-book="deng">
-              <span class="cover cv-gold">灯</span>
+              <span class="cover cv-gold"><i class="cv-t">提灯照河山</i></span>
               <span class="bc-body">
                 <span class="bc-top"><h2 class="bt">提灯照河山</h2><span class="status-pill sp-draft">连载中</span></span>
                 <span class="bc-desc">东方玄幻 · 「不存在的第七任」提灯人上路，想查清前六任怎么死的，却先查出了自己左臂里缝着的东西。</span>
@@ -593,7 +626,7 @@ textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-heigh
               <span class="bc-cta">继续写作 <svg class="ic sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
             </button>
             <button class="book-card" data-open-book="wu">
-              <span class="cover cv-blue">雾</span>
+              <span class="cover cv-blue"><i class="cv-t">雾起长安</i></span>
               <span class="bc-body">
                 <span class="bc-top"><h2 class="bt">雾起长安</h2><span class="status-pill sp-outline">大纲阶段</span></span>
                 <span class="bc-desc">悬疑刑侦 · 天宝年间的大理寺评事，接手一桩卷宗里被反复撕掉的案子。</span>
@@ -603,7 +636,7 @@ textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-heigh
               <span class="bc-cta">打开作品 <svg class="ic sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
             </button>
             <button class="book-card" data-open-book="chun">
-              <span class="cover cv-rose">春</span>
+              <span class="cover cv-rose"><i class="cv-t">春窗灯影录</i></span>
               <span class="bc-body">
                 <span class="bc-top"><h2 class="bt">春窗灯影录</h2><span class="status-pill sp-done">已完本</span></span>
                 <span class="bc-desc">古言宅斗 · 借住外祖家的孤女，在灯影与账目之间拿回自己的嫁妆。</span>
@@ -656,11 +689,31 @@ textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-heigh
           <div id="pane-fields">
             <h2 class="sec-t">基本信息</h2>
             <div class="f-grid">
-              <div class="f"><label for="fTitle">书名</label><input class="inp" id="fTitle" placeholder="例：提灯照河山"></div>
+              <div class="f"><label for="fTitle">书名</label><input class="inp" id="fTitle" value="提灯照河山" placeholder="例：提灯照河山"></div>
               <div class="f"><label for="fLen">目标篇幅</label><select class="inp" id="fLen"><option>30 万字（快节奏）</option><option selected>60 万字（标准长篇）</option><option>100 万字+（超长连载）</option></select></div>
               <div class="f full"><label for="fCore">一句话内核</label><textarea class="inp" id="fCore" placeholder="背着「不存在的第七任」名分上路的提灯人，想查清前六任怎么死的，却先查出了自己左臂里缝着的东西。"></textarea></div>
               <div class="f"><label for="fPov">叙事视角</label><select class="inp" id="fPov"><option selected>第三人称限知（单视角）</option><option>第三人称多视角</option><option>第一人称</option></select></div>
               <div class="f"><label for="fModel">创作模型</label><select class="inp" id="fModel"><option selected>deepseek-v4（Harness 配置）</option><option>glm-5-air（草稿用）</option></select></div>
+            </div>
+          </div>
+
+          <div id="pane-cover">
+            <h2 class="sec-t">封面</h2>
+            <div class="cover-row">
+              <div class="cover-preview cv-gold" id="coverPreview">
+                <span class="cover-title" id="coverPreviewTitle">提灯照河山</span>
+                <span class="cover-slot" aria-hidden="true">
+                  <svg class="ic lg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="9" cy="9" r="1.6"/><path d="m21 15-4.5-4.5L7 20"/></svg>
+                  <b>拖入图片</b><span>JPG / PNG · 3:4</span>
+                </span>
+                <span class="crop-frame" aria-hidden="true"><i class="c-tl"></i><i class="c-tr"></i><i class="c-bl"></i><i class="c-br"></i></span>
+              </div>
+              <div class="cover-modes" id="coverModes">
+                <button class="cover-mode on" data-cover="title" type="button"><b>默认书名封面</b><span>色板随书名稳定生成 · 不需要素材，书架自然整齐</span></button>
+                <button class="cover-mode" data-cover="upload" type="button"><b>上传图片并裁剪</b><span>3:4 比例 · 拖拽调整构图，可随时重新裁剪或移除</span></button>
+                <button class="cover-mode" data-cover="ai" type="button" disabled><b>AI 生成封面 <i class="soon">规划中</i></b><span>按题材与一句话内核生成封面图（M4+ 计划，本期仅留入口）</span></button>
+                <p class="cover-hint">封面会出现在书架卡片、工作台标题区与导出 EPUB 的封面首图</p>
+              </div>
             </div>
           </div>
 
@@ -1078,6 +1131,7 @@ document.getElementById('btnImportHome').addEventListener('click', () => {
   document.querySelectorAll('#initModes .mode-card').forEach(b => b.classList.toggle('on', b.dataset.mode === 'import'));
   document.getElementById('pane-tpl').style.display = 'none';
   document.getElementById('pane-fields').style.display = 'none';
+  document.getElementById('pane-cover').style.display = 'none';
   document.getElementById('pane-import').style.display = '';
 });
 document.querySelectorAll('[data-open-book]').forEach(card => {
@@ -1091,12 +1145,37 @@ document.getElementById('initModes').addEventListener('click', e => {
   document.getElementById('pane-tpl').style.display = btn.dataset.mode === 'tpl' ? '' : 'none';
   document.getElementById('pane-import').style.display = btn.dataset.mode === 'import' ? '' : 'none';
   document.getElementById('pane-fields').style.display = btn.dataset.mode === 'import' ? 'none' : '';
+  document.getElementById('pane-cover').style.display = btn.dataset.mode === 'import' ? 'none' : '';
 });
 document.getElementById('tplGrid').addEventListener('click', e => {
   const chip = e.target.closest('.tpl-chip');
   if (!chip) return;
   document.querySelectorAll('#tplGrid .tpl-chip').forEach(b => b.classList.toggle('on', b === chip));
 });
+
+// ---------- 封面：默认书名封面（色板随书名稳定生成）/ 上传裁剪 / AI 规划中 ----------
+const COVER_PALETTES = ['cv-gold', 'cv-blue', 'cv-rose', 'cv-forest', 'cv-plum'];
+function coverPaletteFor(title){
+  let hash = 0;
+  for (const ch of title) hash = (hash * 31 + ch.charCodeAt(0)) % 997;
+  return COVER_PALETTES[hash % COVER_PALETTES.length];
+}
+const coverPreview = document.getElementById('coverPreview');
+const coverTitleEl = document.getElementById('coverPreviewTitle');
+function refreshCoverPreview(){
+  const title = (document.getElementById('fTitle').value.trim()) || '未命名作品';
+  coverTitleEl.textContent = title;
+  COVER_PALETTES.forEach(c => coverPreview.classList.remove(c));
+  coverPreview.classList.add(coverPaletteFor(title));
+}
+document.getElementById('fTitle').addEventListener('input', refreshCoverPreview);
+document.getElementById('coverModes').addEventListener('click', e => {
+  const btn = e.target.closest('.cover-mode');
+  if (!btn || btn.disabled) return;
+  document.querySelectorAll('.cover-mode').forEach(b => b.classList.toggle('on', b === btn));
+  coverPreview.classList.toggle('upload-mode', btn.dataset.cover === 'upload');
+});
+refreshCoverPreview();
 
 // ---------- 结构树 ----------
 document.getElementById('tree').addEventListener('click', e => {

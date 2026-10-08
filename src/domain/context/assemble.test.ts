@@ -67,6 +67,7 @@ describe('buildLayersForScene', () => {
     createdAt: 0,
     updatedAt: 0,
     meta: { genre: '东方玄幻', coreIdea: '提灯人查前六任死因', pov: '第三人称限知', targetLength: '60 万字' },
+    cover: { kind: 'title', palette: 0 },
     volumes: [
       {
         id: 'v1',

@@ -6,7 +6,8 @@
 
 import type { NovelProjectDocumentV2, NovelProjectSummary, Scene } from '@/domain/model'
 import { countProjectWords } from '@/domain/model'
-import type { CreateProjectInput, PlatformApi, StudioPreferences } from './types'
+import { defaultCover } from '@/domain/cover'
+import type { CreateProjectInput, PlatformApi, SnapshotInput, StudioPreferences } from './types'
 
 const PREFS_KEY = 'mns.mock.preferences'
 
@@ -28,6 +29,7 @@ function seedProject(): NovelProjectDocumentV2 {
       pov: '第三人称限知（单视角）',
       targetLength: '60 万字（标准长篇）',
     },
+    cover: defaultCover('提灯照河山'),
     volumes: [
       {
         id: 'vol-1',
@@ -234,6 +236,7 @@ function seedOutlineProject(): NovelProjectDocumentV2 {
       genre: '悬疑刑侦',
       coreIdea: '天宝年间的大理寺评事，接手一桩卷宗里被反复撕掉的案子。',
     },
+    cover: defaultCover('雾起长安'),
     volumes: [],
     entities: [],
     foreshadows: [],
@@ -250,6 +253,7 @@ function summarize(project: NovelProjectDocumentV2): NovelProjectSummary {
     wordCount,
     sceneCount: project.volumes.flatMap(v => v.chapters).flatMap(c => c.scenes).length,
     status: wordCount > 0 ? 'serial' : 'outline',
+    cover: project.cover,
   }
 }
 
@@ -260,6 +264,29 @@ function readPrefs(): StudioPreferences {
   } catch { /* 内存态降级 */ }
   return { theme: 'system' }
 }
+
+/** Mock 快照存储（会话内存，真实持久化在宿主 snapshots 表） */
+const mockSnapshots: Array<SnapshotInput & { id: string; createdAt: number }> = []
+
+/** 演示范文库：多候选按「第 N 个候选方案」提示词轮换不同走向，验证多候选管线 */
+const DEMO_EXCERPTS: string[][] = [
+  [
+    '雨幕里忽然炸开一声闷雷。阿萤抱着膝的手指蜷了蜷，火光把她的影子钉在墙上，一动不动。',
+    '「你说，」她忽然开口，声音轻得像怕惊了灯，「提灯的人死了，灯会替他记多久？」',
+    '沈砚没有答。铜灯在他掌心极轻地震了一下，像有个字，含在喉咙里没能说出口。',
+  ],
+  [
+    '庙外的雨声忽然停了。不是渐歇，是齐齐截断，像有人把整条河从半空收了回去。',
+    '沈砚按住铜灯起身，指腹触到灯身的一刻，冰凉的铜面上竟透出一线温痕。',
+    '「别出去。」阿萤说。她的声音第一次不俏皮了。',
+  ],
+  [
+    '他把灯放在膝上，火光矮了下去，只照亮两只手之间的一小片。',
+    '「师父说，提灯的人不问灯的来历。」沈砚低声道，「现在我想问了。」',
+    '阿萤看着他，半晌，把掌心按在第七道刻痕上：「那你先告诉我，你左臂里缠着的东西，叫什么名字？」',
+  ],
+]
+let demoCursor = 0
 
 export const mockPlatform: PlatformApi = {
   async listProjects() {
@@ -274,10 +301,11 @@ export const mockPlatform: PlatformApi = {
 
   async createProject(input: CreateProjectInput) {
     const now = Date.now()
+    const title = input.title.trim() || '未命名作品'
     return {
       version: 2,
       id: newId('proj'),
-      title: input.title.trim() || '未命名作品',
+      title,
       createdAt: now,
       updatedAt: now,
       meta: {
@@ -286,6 +314,7 @@ export const mockPlatform: PlatformApi = {
         pov: input.pov ?? '第三人称限知（单视角）',
         targetLength: input.targetLength ?? '60 万字（标准长篇）',
       },
+      cover: input.cover ?? defaultCover(title),
       volumes: [
         {
           id: newId('vol'),
@@ -320,6 +349,12 @@ export const mockPlatform: PlatformApi = {
     if (!entity.id) throw new Error('实体缺少 id')
   },
 
+  async createSnapshot(input: SnapshotInput) {
+    const id = newId('snap')
+    mockSnapshots.push({ id, ...input, createdAt: Date.now() })
+    return { id }
+  },
+
   async getPreferences() {
     return readPrefs()
   },
@@ -332,13 +367,17 @@ export const mockPlatform: PlatformApi = {
   },
 
   async streamGeneration(request, onChunk, signal) {
-    // 演示范文：逐字吐出，验证流式管线与中断
-    const reply = `【${request.role} · Mock】收到 ${request.prompt.length} 字提示词。这里是独立开发模式的固定回复：\n\n雷声在远处滚过，铜灯的第六道刻痕亮了一瞬，又暗下去。`
+    // 演示范文：按多候选变体提示词选取不同走向，逐字吐出，验证流式管线与中断
+    const variantMatch = /这是第 (\d+) \/ (\d+) 个候选方案/.exec(request.prompt)
+    const variantIndex = variantMatch ? Number(variantMatch[1]) - 1 : 0
+    const excerpt = DEMO_EXCERPTS[(variantIndex + demoCursor) % DEMO_EXCERPTS.length]
+    if (!variantMatch) demoCursor++
+    const reply = excerpt.join('\n\n')
     if (signal?.aborted) throw new DOMException('aborted', 'AbortError')
     let acc = ''
-    for (const chunk of reply.match(/.{1,6}/gs) ?? []) {
+    for (const chunk of reply.match(/.{1,5}/gs) ?? []) {
       if (signal?.aborted) throw new DOMException('aborted', 'AbortError')
-      await new Promise(resolve => setTimeout(resolve, 24))
+      await new Promise(resolve => setTimeout(resolve, 22))
       acc += chunk
       onChunk(chunk)
     }

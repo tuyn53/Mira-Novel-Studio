@@ -11,6 +11,7 @@ import router from './router'
 import { mountApp } from './platform/wujie'
 import './styles/tokens.scss'
 import './styles/base.scss'
+import './styles/covers.scss'
 
 // 图标数据本地化：lucide 全集随包分发，运行时不请求 iconify API（本地优先）
 addCollection(lucide)

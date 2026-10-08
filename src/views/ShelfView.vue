@@ -17,7 +17,7 @@
 
     <div v-loading="shelfLoading" class="cards">
       <button v-for="p in projects" :key="p.id" class="book-card" type="button" @click="router.push(`/book/${p.id}/write`)">
-        <span class="cover" :class="coverClass(p.id)">{{ p.title.slice(0, 1) }}</span>
+        <span class="cover" :class="coverPaletteClass(p.cover, p.title)"><i class="cv-t">{{ p.title }}</i></span>
         <span class="body">
           <span class="row">
             <strong>{{ p.title }}</strong>
@@ -37,6 +37,7 @@ import { Icon } from '@iconify/vue'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ThemeToggle from '@/components/ThemeToggle.vue'
+import { coverPaletteClass } from '@/domain/cover'
 import { useWorkspaceStore } from '@/stores/workspace'
 import { formatDate, formatWords } from '@/utils/format'
 
@@ -45,13 +46,6 @@ const router = useRouter()
 const store = useWorkspaceStore()
 const projects = computed(() => store.projects)
 const shelfLoading = computed(() => store.shelfLoading)
-
-const COVER_STYLES = ['cv-gold', 'cv-blue', 'cv-rose'] as const
-function coverClass(id: string) {
-  let hash = 0
-  for (const ch of id) hash = (hash * 31 + ch.charCodeAt(0)) % 997
-  return COVER_STYLES[hash % COVER_STYLES.length]
-}
 
 onMounted(() => void store.loadProjects())
 </script>
@@ -126,11 +120,23 @@ onMounted(() => void store.loadProjects())
     flex: 0 0 auto;
     width: 76px;
     height: 100px;
+    padding: 11px;
     border-radius: 10px;
     color: #fff;
-    font-family: var(--font-serif);
-    font-size: 28px;
-    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset -14px 0 24px rgba(0, 0, 0, 0.18);
+
+    .cv-t {
+      width: 2em;
+      color: #fff;
+      font-family: var(--font-serif);
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 1.5;
+      text-align: center;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      word-break: break-all;
+    }
   }
 
   .body {

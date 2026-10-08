@@ -1,0 +1,8 @@
+// 封面调色板 —— 默认书名封面用（index = coverPaletteFor(title)，见 domain/cover.ts）
+// 实体色来自设计原型（prototype/index.html 的 cv-* 类），克制、书卷气、明暗下均可读
+
+.cover-palette-0 { background: linear-gradient(160deg, #8a5306, #4a2e00); }
+.cover-palette-1 { background: linear-gradient(160deg, #2f5fd0, #1d3a85); }
+.cover-palette-2 { background: linear-gradient(160deg, #c13a68, #7e2145); }
+.cover-palette-3 { background: linear-gradient(160deg, #2f6d4f, #183f2c); }
+.cover-palette-4 { background: linear-gradient(160deg, #6f4a9e, #3f2a63); }
