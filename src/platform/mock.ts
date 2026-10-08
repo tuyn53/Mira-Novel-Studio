@@ -24,7 +24,9 @@ function seedProject(): NovelProjectDocumentV2 {
     createdAt: now - 86_400_000 * 30,
     updatedAt: now,
     meta: {
-      genre: '东方玄幻',
+      channel: 'male',
+      genre: '东方仙侠',
+      tags: ['古代', '洪荒神话'],
       coreIdea: '背着「不存在的第七任」名分上路的提灯人，想查清前六任怎么死的，却先查出了自己左臂里缝着的东西。',
       pov: '第三人称限知（单视角）',
       targetLength: '60 万字（标准长篇）',
@@ -233,7 +235,9 @@ function seedOutlineProject(): NovelProjectDocumentV2 {
     updatedAt: Date.now() - 86_400_000 * 3,
     meta: {
       ...base.meta,
-      genre: '悬疑刑侦',
+      channel: 'general',
+      genre: '悬疑推理',
+      tags: ['古代'],
       coreIdea: '天宝年间的大理寺评事，接手一桩卷宗里被反复撕掉的案子。',
     },
     cover: defaultCover('雾起长安'),
@@ -268,6 +272,26 @@ function readPrefs(): StudioPreferences {
 /** Mock 快照存储（会话内存，真实持久化在宿主 snapshots 表） */
 const mockSnapshots: Array<SnapshotInput & { id: string; createdAt: number }> = []
 
+/**
+ * Mock 内存工作副本：会话内创建/编辑的作品与种子作品同样可读回，
+ * 使「书架 → 向导 → 创建 → 工作台」完整闭环在独立开发模式下可走通。
+ * （真实持久化在宿主 SQLite；此处仅进程内。）
+ */
+const mockProjects = new Map<string, NovelProjectDocumentV2>()
+function ensureSeeded() {
+  if (mockProjects.size) return
+  for (const project of [seedProject(), seedOutlineProject()]) {
+    mockProjects.set(project.id, project)
+  }
+}
+
+function findProject(projectId: string): NovelProjectDocumentV2 {
+  ensureSeeded()
+  const project = mockProjects.get(projectId)
+  if (!project) throw new Error(`Mock 项目不存在：${projectId}`)
+  return project
+}
+
 /** 演示范文库：多候选按「第 N 个候选方案」提示词轮换不同走向，验证多候选管线 */
 const DEMO_EXCERPTS: string[][] = [
   [
@@ -290,26 +314,30 @@ let demoCursor = 0
 
 export const mockPlatform: PlatformApi = {
   async listProjects() {
-    return [seedProject(), seedOutlineProject()].map(summarize)
+    ensureSeeded()
+    return [...mockProjects.values()]
+      .sort((a, b) => b.updatedAt - a.updatedAt)
+      .map(summarize)
   },
 
   async getProject(projectId) {
-    if (projectId === 'proj-wu') return seedOutlineProject()
-    if (projectId !== 'proj-deng') throw new Error(`Mock 项目不存在：${projectId}`)
-    return seedProject()
+    return findProject(projectId)
   },
 
   async createProject(input: CreateProjectInput) {
+    ensureSeeded()
     const now = Date.now()
     const title = input.title.trim() || '未命名作品'
-    return {
+    const project: NovelProjectDocumentV2 = {
       version: 2,
       id: newId('proj'),
       title,
       createdAt: now,
       updatedAt: now,
       meta: {
-        genre: input.templateId ?? '未设定',
+        channel: input.channel,
+        genre: input.genre ?? '未设定',
+        tags: input.tags ?? [],
         coreIdea: input.coreIdea ?? '',
         pov: input.pov ?? '第三人称限知（单视角）',
         targetLength: input.targetLength ?? '60 万字（标准长篇）',
@@ -336,17 +364,25 @@ export const mockPlatform: PlatformApi = {
       plotLines: [],
       snapshots: [],
     }
+    mockProjects.set(project.id, project)
+    return project
   },
 
   async saveScene(projectId, scene: Scene) {
-    // Mock 不做持久化，仅校验流程；真实持久化在宿主 novelStore
-    void projectId
-    if (!scene.id) throw new Error('场景缺少 id')
+    const project = findProject(projectId)
+    const scenes = project.volumes.flatMap(volume => volume.chapters).flatMap(chapter => chapter.scenes)
+    const target = scenes.find(item => item.id === scene.id)
+    if (!target) throw new Error(`未找到场景：${scene.id}`)
+    Object.assign(target, scene)
+    project.updatedAt = Date.now()
   },
 
   async saveEntity(projectId, entity) {
-    void projectId
-    if (!entity.id) throw new Error('实体缺少 id')
+    const project = findProject(projectId)
+    const index = project.entities.findIndex(item => item.id === entity.id)
+    if (index >= 0) project.entities[index] = entity
+    else project.entities.push(entity)
+    project.updatedAt = Date.now()
   },
 
   async createSnapshot(input: SnapshotInput) {

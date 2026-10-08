@@ -30,7 +30,6 @@ export const zhCN = {
     modeTpl: '从模板开始',
     modeBlank: '空白作品',
     modeImport: '导入已有作品',
-    tplTitle: '题材模板',
     infoTitle: '基本信息',
     fieldTitle: '书名',
     fieldLength: '目标篇幅',

@@ -25,6 +25,7 @@ src/
 ├─ domain/            纯 TS 领域模块（无 DOM，vitest 覆盖）
 │  ├─ model.ts             数据契约 v2：卷→章→场景 + 实体库 + 封面 + 快照（宿主共同契约）
 │  ├─ cover.ts             默认书名封面：色板由书名哈希稳定生成
+│  ├─ taxonomy.ts          开书选题：频道 → 主分类 → 标签组（标签驱动生成预设）
 │  ├─ context/             上下文组装器：分层优先级 + token 预算裁剪
 │  ├─ generation/          伴写生成服务：prompt 组装（复用上下文分层）+ 多候选并行
 │  ├─ review/              审阅 diff：段落级对齐（M2 审阅流基础）
@@ -38,7 +39,7 @@ src/
 │  ├─ write/               写作区组件：WriteEditor（Milkdown 富文本 + 纯文本）、AiPanel（多候选）
 │  └─ ThemeToggle.vue
 ├─ router/            hash 路由：书架 → 向导 → /book/:id/:section
-├─ views/             书架、开书向导（含封面选择）、工作台（写作/编排/设定/审阅）
+├─ views/             书架、开书向导（选题 + 封面）、工作台（写作/编排/设定/审阅）
 ├─ locale/zh-CN.ts    文案集中（首版仅中文）
 └─ styles/            tokens.scss（书卷暖色）+ covers.scss（封面调色板）+ base.scss
 ```

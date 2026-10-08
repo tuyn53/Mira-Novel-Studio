@@ -97,8 +97,16 @@ export interface Snapshot {
   content: string
 }
 
+/** 频道（对标番茄「目标读者」） */
+export type Channel = 'male' | 'female' | 'general'
+
 export interface ProjectMeta {
+  /** 频道：决定分类库与默认情感基调（选题见 domain/taxonomy.ts） */
+  channel?: Channel
+  /** 主分类（单选），如「东方仙侠」「宫斗宅斗」 */
   genre: string
+  /** 标签组选中项（题材≤3/人设≤2/情节≤2/情感≤2），驱动生成预设与一致性规则 */
+  tags?: string[]
   coreIdea: string
   pov: string
   targetLength: string

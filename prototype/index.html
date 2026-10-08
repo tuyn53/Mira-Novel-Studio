@@ -521,12 +521,29 @@ body:not(.in-book) .tb-book{display:none}
 .mode-card:hover{border-color:var(--cp-text-tertiary)}
 .mode-card.on{background:var(--cp-primary-contrast);border-color:var(--cp-primary);box-shadow:0 0 0 1px var(--cp-primary)}
 .sec-t{margin:0 0 12px;font-size:13px;font-weight:600}
-.tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:26px}
-.tpl-chip{display:flex;flex-direction:column;gap:3px;padding:12px 14px;text-align:left;background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-md);transition:all .15s var(--ease-out)}
-.tpl-chip b{font-size:12.5px;font-weight:600}
-.tpl-chip span{color:var(--cp-text-tertiary);font-size:11px;line-height:1.55}
-.tpl-chip:hover{border-color:var(--cp-text-tertiary)}
-.tpl-chip.on{background:var(--cp-primary-contrast);border-color:var(--cp-primary);box-shadow:0 0 0 1px var(--cp-primary)}
+.sec-hint{color:var(--cp-text-tertiary);font-size:11px;font-weight:400;margin-left:6px}
+/* ---- 开书选题：频道 / 分类 / 标签 ---- */
+.channel-row{display:flex;gap:8px;margin-bottom:26px}
+.channel-chip{padding:7px 22px;color:var(--cp-text-secondary);background:var(--cp-bg-elevated);border:1px solid var(--cp-border);border-radius:var(--radius-md);font-size:13px;font-weight:500;transition:all .15s var(--ease-out)}
+.channel-chip:hover{border-color:var(--cp-text-tertiary)}
+.channel-chip.on{color:#fff;background:var(--cp-primary);border-color:var(--cp-primary);box-shadow:0 2px 8px rgb(47 95 208 / 22%)}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:26px}
+.cat-chip{padding:9px 12px;color:var(--cp-text-secondary);text-align:center;background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-md);font-size:12.5px;transition:all .15s var(--ease-out)}
+.cat-chip:hover{border-color:var(--cp-text-tertiary);color:var(--cp-text)}
+.cat-chip.on{color:var(--cp-primary-hover);background:var(--cp-primary-contrast);border-color:var(--cp-primary);box-shadow:0 0 0 1px var(--cp-primary);font-weight:600}
+.tag-groups{display:flex;flex-direction:column;gap:14px;margin-bottom:18px}
+.tag-group-head{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;font-size:12px;font-weight:600}
+.tag-group-head .cnt{margin-left:auto;color:var(--cp-text-tertiary);font-size:11px;font-weight:400;font-variant-numeric:tabular-nums}
+.tag-chips{display:flex;flex-wrap:wrap;gap:7px}
+.tag-chip{padding:5px 13px;color:var(--cp-text-secondary);background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:999px;font-size:12px;transition:all .13s var(--ease-out)}
+.tag-chip:hover{border-color:var(--cp-text-tertiary);color:var(--cp-text)}
+.tag-chip.on{color:var(--cp-primary-hover);background:var(--cp-primary-lighter);border-color:var(--cp-primary);font-weight:500}
+.tag-chip.disabled{opacity:.4;cursor:not-allowed}
+.tag-summary{padding:11px 14px;background:var(--cp-gold-soft);border-radius:var(--radius-md);color:var(--cp-text);font-size:12.5px;line-height:1.7}
+.tag-summary b{font-weight:600}
+.tag-summary .none{color:var(--cp-text-tertiary)}
+.tag-ai-hint{display:flex;align-items:flex-start;gap:7px;margin-top:10px;color:var(--cp-text-tertiary);font-size:11.5px;line-height:1.6}
+.tag-ai-hint .app-icon,.tag-ai-hint svg{flex:0 0 auto;margin-top:2px;color:var(--cp-gold)}
 .f-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:26px}
 .f-grid .full{grid-column:1/-1}
 .f label{display:block;margin-bottom:6px;color:var(--cp-text-tertiary);font-size:11.5px}
@@ -668,15 +685,24 @@ textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-heigh
           </div>
 
           <div id="pane-tpl">
-            <h2 class="sec-t">题材模板</h2>
-            <div class="tpl-grid" id="tplGrid">
-              <button class="tpl-chip on"><b>东方玄幻</b><span>12 条实体预设 · 8 组提示词 · 卷纲/章纲/Beats 三层结构</span></button>
-              <button class="tpl-chip"><b>都市异闻</b><span>10 条实体预设 · 规则怪谈约束 · 悬念钩子库</span></button>
-              <button class="tpl-chip"><b>悬疑刑侦</b><span>时间线面板优先 · 证据链实体 · 误导清单</span></button>
-              <button class="tpl-chip"><b>科幻 · 末日</b><span>世界观规则引擎 · 技术树 · 群像卡</span></button>
-              <button class="tpl-chip"><b>古言 · 宅斗</b><span>人物关系图优先 · 家族势力卡 · 称谓表</span></button>
-              <button class="tpl-chip"><b>无限流</b><span>副本结构模板 · 规则卡组 · 队伍状态追踪</span></button>
+            <h2 class="sec-t">频道 <span class="sec-hint">决定分类库与默认情感基调</span></h2>
+            <div class="channel-row" id="channelRow">
+              <button class="channel-chip on" data-channel="male" type="button">男频</button>
+              <button class="channel-chip" data-channel="female" type="button">女频</button>
+              <button class="channel-chip" data-channel="general" type="button">通用</button>
             </div>
+
+            <h2 class="sec-t">主分类 <span class="sec-hint">必选且只能选一个</span></h2>
+            <div class="cat-grid" id="catGrid"></div>
+
+            <h2 class="sec-t">标签 <span class="sec-hint">题材主题 ≤3 · 主角人设 ≤2 · 情节走向 ≤2 · 情感基调 ≤2</span></h2>
+            <div class="tag-groups" id="tagGroups"></div>
+
+            <div class="tag-summary" id="tagSummary"></div>
+            <p class="tag-ai-hint">
+              <svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3v3M5.6 5.6l2.1 2.1M18.4 5.6l-2.1 2.1M4 13h3M17 13h3M8 21h8M9 17h6l1.2-2.6a5.5 5.5 0 1 0-8.4 0z"/></svg>
+              分类与标签会在创建时预填实体卡与提示词组；填完一句话内核后可让 AI 按内核推荐（规划中）
+            </p>
           </div>
 
           <div id="pane-import" style="display:none">
@@ -1147,11 +1173,90 @@ document.getElementById('initModes').addEventListener('click', e => {
   document.getElementById('pane-fields').style.display = btn.dataset.mode === 'import' ? 'none' : '';
   document.getElementById('pane-cover').style.display = btn.dataset.mode === 'import' ? 'none' : '';
 });
-document.getElementById('tplGrid').addEventListener('click', e => {
-  const chip = e.target.closest('.tpl-chip');
-  if (!chip) return;
-  document.querySelectorAll('#tplGrid .tpl-chip').forEach(b => b.classList.toggle('on', b === chip));
+// ---------- 开书选题：频道 → 主分类 → 标签组（对标番茄，标签驱动生成预设） ----------
+const TAXONOMY = {
+  categories: {
+    male: ['东方仙侠', '都市高武', '悬疑灵异', '历史古代', '科幻末世', '游戏体育', '战神赘婿', '都市脑洞'],
+    female: ['宫斗宅斗', '豪门总裁', '青春甜宠', '古风世情', '玄幻言情', '年代种田', '悬疑恋爱', '现言脑洞'],
+    general: ['悬疑推理', '规则怪谈', '无限流', '科幻未来', '现实向', '冒险'],
+  },
+  channelLabels: { male: '男频', female: '女频', general: '通用' },
+  tagGroups: [
+    { key: 'theme', label: '题材主题', limit: 3, tags: ['古代', '都市', '校园', '职场', '娱乐圈', '末世', '星际', '灵气复苏', '赛博朋克', '克苏鲁', '洪荒神话', '民间传说'] },
+    { key: 'cast', label: '主角人设', limit: 2, tags: ['战神', '神医', '赘婿', '神豪', '学霸', '大小姐', '团宠', '病娇', '女强', '扮猪吃虎', '反派'] },
+    { key: 'plot', label: '情节走向', limit: 2, tags: ['系统', '重生', '穿越', '马甲', '失忆', '替身', '打脸', '先婚后爱', '追妻火葬场', '救赎', '养成'] },
+    { key: 'tone', label: '情感基调', limit: 2, tags: ['1v1', '无CP', '甜宠', '虐恋', '暗恋', '青梅竹马', '久别重逢'] },
+  ],
+};
+const selection = { channel: 'male', category: '东方仙侠', tags: [] };
+
+const catGrid = document.getElementById('catGrid');
+const tagGroupsEl = document.getElementById('tagGroups');
+const tagSummary = document.getElementById('tagSummary');
+
+function renderCategories() {
+  catGrid.innerHTML = '';
+  TAXONOMY.categories[selection.channel].forEach(name => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cat-chip' + (name === selection.category ? ' on' : '');
+    btn.textContent = name;
+    btn.addEventListener('click', () => { selection.category = name; renderCategories(); updateSummary(); });
+    catGrid.appendChild(btn);
+  });
+}
+
+function renderTags() {
+  tagGroupsEl.innerHTML = '';
+  TAXONOMY.tagGroups.forEach(group => {
+    const wrap = document.createElement('div');
+    wrap.className = 'tag-group';
+    const filled = group.tags.filter(t => selection.tags.includes(t)).length;
+    wrap.innerHTML = `<div class="tag-group-head"><span>${group.label}</span><span class="cnt">${filled}/${group.limit}</span></div><div class="tag-chips"></div>`;
+    const chips = wrap.querySelector('.tag-chips');
+    group.tags.forEach(tag => {
+      const on = selection.tags.includes(tag);
+      const atLimit = filled >= group.limit;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tag-chip' + (on ? ' on' : '') + (!on && atLimit ? ' disabled' : '');
+      btn.textContent = tag;
+      btn.addEventListener('click', () => {
+        if (on) selection.tags = selection.tags.filter(t => t !== tag);
+        else if (!atLimit) selection.tags = [...selection.tags, tag];
+        renderTags(); updateSummary();
+      });
+      chips.appendChild(btn);
+    });
+    tagGroupsEl.appendChild(wrap);
+  });
+}
+
+function updateSummary() {
+  const parts = [TAXONOMY.channelLabels[selection.channel], selection.category, ...selection.tags];
+  const entityPresets = 8 + selection.tags.length * 2;
+  const promptPacks = 4 + selection.tags.length;
+  const ruleHint = selection.tags.length ? `，并在审校时启用「${selection.tags.slice(0, 2).join('」「')}」相关的一致性规则` : '';
+  tagSummary.innerHTML = `已选：<b>${parts.join(' · ')}</b><br>创建时预填 <b>${presetsFor()}</b> 等约 <b>${entityPresets}</b> 条实体预设与 <b>${promptPacks}</b> 组提示词${ruleHint}`;
+}
+function presetsFor() {
+  const map = { 系统: '系统面板概念卡', 追妻火葬场: '节奏协议（误会→决裂→追悔→挽回）', 无CP: '情感线禁忌', 规则怪谈: '规则条目卡组', 扮猪吃虎: '身份暴露节奏' };
+  const hit = selection.tags.map(t => map[t]).filter(Boolean);
+  return hit.length ? hit.slice(0, 2).join('、') : '分类基础预设包';
+}
+
+document.getElementById('channelRow').addEventListener('click', e => {
+  const btn = e.target.closest('.channel-chip');
+  if (!btn) return;
+  document.querySelectorAll('.channel-chip').forEach(b => b.classList.toggle('on', b === btn));
+  selection.channel = btn.dataset.channel;
+  selection.category = TAXONOMY.categories[selection.channel][0];
+  renderCategories(); updateSummary();
 });
+
+renderCategories();
+renderTags();
+updateSummary();
 
 // ---------- 封面：默认书名封面（色板随书名稳定生成）/ 上传裁剪 / AI 规划中 ----------
 const COVER_PALETTES = ['cv-gold', 'cv-blue', 'cv-rose', 'cv-forest', 'cv-plum'];

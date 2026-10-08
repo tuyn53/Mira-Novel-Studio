@@ -15,13 +15,66 @@
     </div>
 
     <template v-if="activeMode === 'tpl'">
-      <h2 class="sec-t">{{ t.wizard.tplTitle }}</h2>
-      <div class="tpl-grid">
-        <button v-for="tpl in templates" :key="tpl.id" class="tpl-chip" :class="{ on: form.templateId === tpl.id }" type="button" @click="form.templateId = tpl.id">
-          <b>{{ tpl.name }}</b>
-          <span>{{ tpl.desc }}</span>
+      <h2 class="sec-t">频道 <span class="sec-hint">决定分类库与默认情感基调</span></h2>
+      <div class="channel-row">
+        <button
+          v-for="channel in CHANNELS"
+          :key="channel.key"
+          class="channel-chip"
+          :class="{ on: form.channel === channel.key }"
+          type="button"
+          @click="selectChannel(channel.key)"
+        >
+          {{ channel.label }}
         </button>
       </div>
+
+      <h2 class="sec-t">主分类 <span class="sec-hint">必选且只能选一个</span></h2>
+      <div class="cat-grid">
+        <button
+          v-for="category in categories"
+          :key="category"
+          class="cat-chip"
+          :class="{ on: form.category === category }"
+          type="button"
+          @click="form.category = category"
+        >
+          {{ category }}
+        </button>
+      </div>
+
+      <h2 class="sec-t">标签 <span class="sec-hint">题材主题 ≤3 · 主角人设 ≤2 · 情节走向 ≤2 · 情感基调 ≤2</span></h2>
+      <div class="tag-groups">
+        <div v-for="group in TAG_GROUPS" :key="group.key" class="tag-group">
+          <div class="tag-group-head">
+            <span>{{ group.label }}</span>
+            <span class="cnt">{{ countInGroup(form.tags, group) }}/{{ group.limit }}</span>
+          </div>
+          <div class="tag-chips">
+            <button
+              v-for="tag in group.tags"
+              :key="tag"
+              class="tag-chip"
+              :class="{ on: form.tags.includes(tag), disabled: isTagDisabled(group, tag) }"
+              type="button"
+              :disabled="isTagDisabled(group, tag)"
+              @click="toggle(group, tag)"
+            >
+              {{ tag }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tag-summary">
+        已选：<b>{{ selectionText }}</b><br>
+        创建时预填
+        <b>{{ presetWords }}</b> 等约 <b>{{ summary.entityPresets }}</b> 条实体预设与 <b>{{ summary.promptPacks }}</b> 组提示词<span v-if="summary.highlights.length">，并在审校时启用对应的一致性规则</span>
+      </div>
+      <p class="tag-ai-hint">
+        <Icon icon="lucide:lightbulb" width="13" />
+        分类与标签会在创建时预填实体卡与提示词组；填完一句话内核后可让 AI 按内核推荐（规划中）
+      </p>
     </template>
 
     <div v-if="activeMode === 'import'" class="drop">
@@ -98,6 +151,8 @@ import { ElMessage } from 'element-plus'
 import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { coverPaletteFor } from '@/domain/cover'
+import type { Channel } from '@/domain/model'
+import { CATEGORIES, CHANNELS, TAG_GROUPS, countInGroup, presetSummary, toggleTag, type TagGroupDef } from '@/domain/taxonomy'
 import { useWorkspaceStore } from '@/stores/workspace'
 
 const t = useWorkspaceStore().t
@@ -105,32 +160,44 @@ const router = useRouter()
 const store = useWorkspaceStore()
 
 const modes = [
-  { key: 'tpl', label: t.wizard.modeTpl, desc: '题材预设 · 实体与提示词开箱即用' },
+  { key: 'tpl', label: t.wizard.modeTpl, desc: '频道 / 分类 / 标签 · 生成预设开箱即用' },
   { key: 'blank', label: t.wizard.modeBlank, desc: '一张白纸 · 从一句话内核写起' },
   { key: 'import', label: t.wizard.modeImport, desc: 'TXT 按章回自动分章 / 项目 JSON' },
 ] as const
 const activeMode = ref<(typeof modes)[number]['key']>('tpl')
-
-const templates = [
-  { id: 'xuanhuan', name: '东方玄幻', desc: '12 条实体预设 · 8 组提示词 · 卷纲/章纲/Beats 三层结构' },
-  { id: 'urban', name: '都市异闻', desc: '10 条实体预设 · 规则怪谈约束 · 悬念钩子库' },
-  { id: 'mystery', name: '悬疑刑侦', desc: '时间线面板优先 · 证据链实体 · 误导清单' },
-  { id: 'scifi', name: '科幻 · 末日', desc: '世界观规则引擎 · 技术树 · 群像卡' },
-  { id: 'gufei', name: '古言 · 宅斗', desc: '人物关系图优先 · 家族势力卡 · 称谓表' },
-  { id: 'infinite', name: '无限流', desc: '副本结构模板 · 规则卡组 · 队伍状态追踪' },
-]
 
 const lengths = ['30 万字（快节奏）', '60 万字（标准长篇）', '100 万字+（超长连载）']
 const pows = ['第三人称限知（单视角）', '第三人称多视角', '第一人称']
 
 const form = reactive({
   title: '',
-  templateId: 'xuanhuan',
+  channel: 'male' as Channel,
+  category: CATEGORIES.male[0],
+  tags: [] as string[],
   coreIdea: '',
   pov: pows[0],
   targetLength: lengths[1],
 })
 const creating = ref(false)
+
+// ---- 频道 / 分类 / 标签（选题见 domain/taxonomy.ts）----
+const categories = computed(() => CATEGORIES[form.channel])
+const summary = computed(() => presetSummary(form.tags))
+const selectionText = computed(() => [CHANNELS.find(c => c.key === form.channel)?.label, form.category, ...form.tags].filter(Boolean).join(' · '))
+const presetWords = computed(() => (summary.value.highlights.length ? summary.value.highlights.slice(0, 2).join('、') : '分类基础预设包'))
+
+function selectChannel(channel: Channel) {
+  form.channel = channel
+  form.category = CATEGORIES[channel][0]
+}
+
+function toggle(group: TagGroupDef, tag: string) {
+  form.tags = toggleTag(form.tags, group, tag)
+}
+
+function isTagDisabled(group: TagGroupDef, tag: string) {
+  return !form.tags.includes(tag) && countInGroup(form.tags, group) >= group.limit
+}
 
 // 封面：默认书名封面（色板随书名稳定生成）；上传裁剪与 AI 生成在 M4 计划（见设计方案 §4.5）
 const coverMode = ref<'title' | 'upload' | 'ai'>('title')
@@ -144,7 +211,13 @@ async function create() {
   creating.value = true
   try {
     const project = await store.createProject({
-      ...form,
+      title: form.title,
+      channel: form.channel,
+      genre: form.category,
+      tags: [...form.tags],
+      coreIdea: form.coreIdea,
+      pov: form.pov,
+      targetLength: form.targetLength,
       cover: { kind: 'title', palette: coverPaletteFor(form.title.trim()) },
     })
     ElMessage.success(`《${project.title}》已创建`)
@@ -185,8 +258,7 @@ async function create() {
   margin-bottom: 26px;
 }
 
-.mode-card,
-.tpl-chip {
+.mode-card {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -223,13 +295,158 @@ async function create() {
   margin: 0 0 12px;
   font-size: 13px;
   font-weight: 600;
+
+  .sec-hint {
+    margin-left: 6px;
+    color: var(--cp-text-tertiary);
+    font-size: 11px;
+    font-weight: 400;
+  }
 }
 
-.tpl-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+// ---- 开书选题：频道 / 分类 / 标签 ----
+.channel-row {
+  display: flex;
+  gap: 8px;
   margin-bottom: 26px;
+}
+
+.channel-chip {
+  padding: 7px 22px;
+  color: var(--cp-text-secondary);
+  background: var(--cp-bg-elevated);
+  border: 1px solid var(--cp-border);
+  border-radius: $radius-md;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: var(--cp-text-tertiary);
+  }
+
+  &.on {
+    color: #fff;
+    background: var(--cp-primary);
+    border-color: var(--cp-primary);
+  }
+}
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 26px;
+}
+
+.cat-chip {
+  padding: 9px 12px;
+  color: var(--cp-text-secondary);
+  text-align: center;
+  background: var(--cp-bg-elevated);
+  border: 1px solid var(--cp-border-light);
+  border-radius: $radius-md;
+  font-size: 12.5px;
+  transition: all $transition-fast;
+
+  &:hover {
+    color: var(--cp-text);
+    border-color: var(--cp-text-tertiary);
+  }
+
+  &.on {
+    color: var(--cp-primary-hover);
+    background: var(--cp-primary-lighter);
+    border-color: var(--cp-primary);
+    box-shadow: 0 0 0 1px var(--cp-primary);
+    font-weight: 600;
+  }
+}
+
+.tag-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.tag-group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+
+  .cnt {
+    margin-left: auto;
+    color: var(--cp-text-tertiary);
+    font-size: 11px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.tag-chip {
+  padding: 5px 13px;
+  color: var(--cp-text-secondary);
+  background: var(--cp-bg-elevated);
+  border: 1px solid var(--cp-border-light);
+  border-radius: $radius-full;
+  font-size: 12px;
+  transition: all $transition-fast;
+
+  &:hover:not(:disabled) {
+    color: var(--cp-text);
+    border-color: var(--cp-text-tertiary);
+  }
+
+  &.on {
+    color: var(--cp-primary-hover);
+    background: var(--cp-primary-lighter);
+    border-color: var(--cp-primary);
+    font-weight: 500;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.tag-summary {
+  padding: 11px 14px;
+  color: var(--cp-text);
+  background: var(--cp-gold-soft);
+  border-radius: $radius-md;
+  font-size: 12.5px;
+  line-height: 1.7;
+
+  b {
+    font-weight: 600;
+  }
+}
+
+.tag-ai-hint {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  margin-top: 10px;
+  color: var(--cp-text-tertiary);
+  font-size: 11.5px;
+  line-height: 1.6;
+
+  svg {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: var(--cp-gold);
+  }
 }
 
 .drop {

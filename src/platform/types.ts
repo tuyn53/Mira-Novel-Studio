@@ -4,12 +4,15 @@
 // 数据/密钥/文件能力一律归宿主（选型定案 §1），渲染层不得绕过此接口。
 // ============================================================
 
-import type { Entity, NovelProjectDocumentV2, NovelProjectSummary, ProjectCover, Scene } from '@/domain/model'
+import type { Channel, Entity, NovelProjectDocumentV2, NovelProjectSummary, ProjectCover, Scene } from '@/domain/model'
 
 export interface CreateProjectInput {
   title: string
-  /** 题材模板 id（向导中选择；空 = 空白作品） */
-  templateId?: string
+  /** 频道与主分类（开书选题，见 domain/taxonomy.ts） */
+  channel?: Channel
+  genre?: string
+  /** 标签组选中项 */
+  tags?: string[]
   coreIdea?: string
   pov?: string
   targetLength?: string
