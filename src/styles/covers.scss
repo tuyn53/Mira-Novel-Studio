@@ -18,7 +18,7 @@
 
   .cv-title {
     z-index: 2;
-    width: 2em;
+    width: var(--cv-width, 2em);
     max-height: 90cqh;
     overflow: hidden;
     font-family: var(--font-serif);
@@ -66,7 +66,7 @@
     font-size: calc(16cqw * var(--cv-scale, 1));
     letter-spacing: 0.18em;
     text-shadow: none;
-    max-width: 82cqw;
+    max-width: 88cqw;
     overflow: hidden;
     writing-mode: vertical-rl;
   }
@@ -104,7 +104,7 @@
     font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.16em;
     text-shadow: none;
-    max-width: 82cqw;
+    max-width: 88cqw;
     overflow: hidden;
     writing-mode: vertical-rl;
   }
@@ -143,7 +143,7 @@
     font-size: calc(14cqw * var(--cv-scale, 1));
     letter-spacing: 0.3em;
     text-shadow: none;
-    max-width: 82cqw;
+    max-width: 88cqw;
     overflow: hidden;
     writing-mode: vertical-rl;
   }
@@ -170,7 +170,7 @@
     font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.2em;
     text-shadow: none;
-    max-width: 82cqw;
+    max-width: 88cqw;
     overflow: hidden;
     writing-mode: vertical-rl;
   }
@@ -198,7 +198,7 @@
     font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.22em;
     text-shadow: none;
-    max-width: 82cqw;
+    max-width: 88cqw;
     overflow: hidden;
     writing-mode: vertical-rl;
   }
@@ -224,7 +224,7 @@
     color: #fbeef1;
     font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.2em;
-    max-width: 82cqw;
+    max-width: 88cqw;
     overflow: hidden;
     writing-mode: vertical-rl;
   }
@@ -262,7 +262,7 @@
     color: #f4ecd6;
     font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.2em;
-    max-width: 82cqw;
+    max-width: 88cqw;
     overflow: hidden;
     writing-mode: vertical-rl;
   }
@@ -298,7 +298,7 @@
     color: #f0e8d2;
     font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.2em;
-    max-width: 82cqw;
+    max-width: 88cqw;
     overflow: hidden;
     writing-mode: vertical-rl;
   }
@@ -327,7 +327,7 @@
     color: #e8eefc;
     font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.22em;
-    max-width: 82cqw;
+    max-width: 88cqw;
     overflow: hidden;
     writing-mode: vertical-rl;
   }

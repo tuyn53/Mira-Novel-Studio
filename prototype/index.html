@@ -501,7 +501,7 @@ body:not(.in-book) .tb-book{display:none}
 .book-card .cover{flex:0 0 auto;width:84px;height:112px;border-radius:10px}
 /* 封面渲染：色板 + 模板库（对标番茄模板封面，9 套；cqw 容器单位使同一模板跨尺寸等比缩放） */
 .cover-art{container-type:size;position:relative;display:grid;place-items:center;overflow:hidden;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),inset -18cqw 0 30cqw rgba(0,0,0,.18)}
-.cover-art .cv-title{z-index:2;width:2em;max-height:90cqh;overflow:hidden;font-family:var(--font-serif);font-size:calc(15cqw * var(--cv-scale,1));font-style:normal;font-weight:600;line-height:1.5;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.3);word-break:break-all}
+.cover-art .cv-title{z-index:2;width:var(--cv-width,2em);max-height:90cqh;overflow:hidden;font-family:var(--font-serif);font-size:calc(15cqw * var(--cv-scale,1));font-style:normal;font-weight:600;line-height:1.5;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.3);word-break:break-all}
 .cover-palette-0{background:linear-gradient(160deg,#8a5306,#4a2e00)}
 .cover-palette-1{background:linear-gradient(160deg,#2f5fd0,#1d3a85)}
 .cover-palette-2{background:linear-gradient(160deg,#c13a68,#7e2145)}
@@ -509,35 +509,35 @@ body:not(.in-book) .tb-book{display:none}
 .cover-palette-4{background:linear-gradient(160deg,#6f4a9e,#3f2a63)}
 .cover-tpl-ink{background:linear-gradient(170deg,#f6f4ee 0%,#e9e4d8 62%,#d8d2c4 100%);box-shadow:inset 0 0 0 1px rgba(35,39,46,.08)}
 .cover-tpl-ink::before{position:absolute;left:-20%;right:-20%;bottom:-4%;height:46%;content:'';opacity:.85;background:radial-gradient(circle at 30% 100%,rgba(58,64,74,.5) 0 32cqw,transparent 33cqw),radial-gradient(circle at 74% 100%,rgba(58,64,74,.34) 0 26cqw,transparent 27cqw)}
-.cover-tpl-ink .cv-title{width:auto;max-height:66cqh;color:#2b303a;font-size:calc(16cqw * var(--cv-scale,1));letter-spacing:.18em;text-shadow:none;max-width:82cqw;overflow:hidden;writing-mode:vertical-rl}
+.cover-tpl-ink .cv-title{width:auto;max-height:66cqh;color:#2b303a;font-size:calc(16cqw * var(--cv-scale,1));letter-spacing:.18em;text-shadow:none;max-width:88cqw;overflow:hidden;writing-mode:vertical-rl}
 .cover-tpl-gilded{background:linear-gradient(165deg,#eee1c2,#d9c391);box-shadow:inset 0 0 0 1px rgba(138,106,47,.25)}
 .cover-tpl-gilded::before{position:absolute;inset:8cqw;content:'';border:1px solid rgba(138,106,47,.75);box-shadow:inset 0 0 0 2.5cqw rgba(255,255,255,.28)}
 .cover-tpl-gilded::after{position:absolute;top:12cqw;right:12cqw;width:16cqw;height:16cqw;content:'';background:radial-gradient(circle at 50% 50%,#c99a35 0 34%,transparent 36%);border:1px solid rgba(138,106,47,.55);border-radius:50%}
-.cover-tpl-gilded .cv-title{width:auto;max-height:64cqh;color:#6b4f14;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.16em;text-shadow:none;max-width:82cqw;overflow:hidden;writing-mode:vertical-rl}
+.cover-tpl-gilded .cv-title{width:auto;max-height:64cqh;color:#6b4f14;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.16em;text-shadow:none;max-width:88cqw;overflow:hidden;writing-mode:vertical-rl}
 .cover-tpl-minimal{background:#fbfaf7;box-shadow:inset 0 0 0 1px rgba(35,39,46,.08)}
 .cover-tpl-minimal::before{position:absolute;top:12cqw;right:14cqw;left:14cqw;height:1px;content:'';background:rgba(35,39,46,.32)}
 .cover-tpl-minimal::after{position:absolute;right:15cqw;bottom:15cqw;width:6cqw;height:6cqw;content:'';background:#c33f2c;border-radius:50%}
-.cover-tpl-minimal .cv-title{width:auto;max-height:62cqh;color:#23272e;font-size:calc(14cqw * var(--cv-scale,1));letter-spacing:.3em;text-shadow:none;max-width:82cqw;overflow:hidden;writing-mode:vertical-rl}
+.cover-tpl-minimal .cv-title{width:auto;max-height:62cqh;color:#23272e;font-size:calc(14cqw * var(--cv-scale,1));letter-spacing:.3em;text-shadow:none;max-width:88cqw;overflow:hidden;writing-mode:vertical-rl}
 .cover-tpl-sprout{background:linear-gradient(170deg,#f2f1e7,#e2e4d3)}
 .cover-tpl-sprout::before{position:absolute;inset:0;content:'';background:radial-gradient(circle at 73% 27%,rgba(43,106,79,.88) 0 18cqw,transparent 18.8cqw),radial-gradient(circle at 64% 52%,rgba(124,168,110,.92) 0 11cqw,transparent 11.8cqw),radial-gradient(circle at 84% 58%,rgba(196,140,88,.92) 0 7cqw,transparent 7.8cqw)}
-.cover-tpl-sprout .cv-title{width:auto;max-height:64cqh;color:#1f4d38;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.2em;text-shadow:none;max-width:82cqw;overflow:hidden;writing-mode:vertical-rl}
+.cover-tpl-sprout .cv-title{width:auto;max-height:64cqh;color:#1f4d38;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.2em;text-shadow:none;max-width:88cqw;overflow:hidden;writing-mode:vertical-rl}
 .cover-tpl-peach{background:linear-gradient(170deg,#fdf0ef 0%,#f9d9dd 58%,#f3c2cb 100%)}
 .cover-tpl-peach::before{position:absolute;inset:0;content:'';background:radial-gradient(circle at 22% 78%,rgba(233,137,160,.75) 0 6cqw,transparent 6.8cqw),radial-gradient(circle at 30% 88%,rgba(233,137,160,.55) 0 4cqw,transparent 4.8cqw),radial-gradient(circle at 80% 20%,rgba(233,137,160,.6) 0 8cqw,transparent 8.8cqw),radial-gradient(circle at 88% 32%,rgba(233,137,160,.45) 0 5cqw,transparent 5.8cqw)}
-.cover-tpl-peach .cv-title{width:auto;max-height:62cqh;color:#a3415c;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.22em;text-shadow:none;max-width:82cqw;overflow:hidden;writing-mode:vertical-rl}
+.cover-tpl-peach .cv-title{width:auto;max-height:62cqh;color:#a3415c;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.22em;text-shadow:none;max-width:88cqw;overflow:hidden;writing-mode:vertical-rl}
 .cover-tpl-crimson{background:linear-gradient(170deg,#7e2145 0%,#621534 55%,#47091f 100%)}
 .cover-tpl-crimson::before{position:absolute;inset:0;content:'';background:radial-gradient(circle at 78% 76%,rgba(255,190,205,.28) 0 12cqw,transparent 13cqw),radial-gradient(circle at 88% 62%,rgba(255,190,205,.18) 0 7cqw,transparent 7.8cqw),radial-gradient(circle at 18% 22%,rgba(255,190,205,.14) 0 9cqw,transparent 9.8cqw)}
-.cover-tpl-crimson .cv-title{width:auto;max-height:64cqh;color:#fbeef1;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.2em;max-width:82cqw;overflow:hidden;writing-mode:vertical-rl}
+.cover-tpl-crimson .cv-title{width:auto;max-height:64cqh;color:#fbeef1;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.2em;max-width:88cqw;overflow:hidden;writing-mode:vertical-rl}
 .cover-tpl-olive{background:linear-gradient(165deg,#75754a 0%,#5c5c36 60%,#45452a 100%)}
 .cover-tpl-olive::before{position:absolute;top:14cqw;right:12cqw;left:12cqw;height:1px;content:'';background:rgba(226,200,130,.7);box-shadow:0 calc(100cqh - 28cqw) 0 rgba(226,200,130,.7)}
 .cover-tpl-olive::after{position:absolute;bottom:13cqw;left:12cqw;width:5cqw;height:5cqw;content:'';background:rgba(226,200,130,.85);transform:rotate(45deg)}
-.cover-tpl-olive .cv-title{width:auto;max-height:62cqh;color:#f4ecd6;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.2em;max-width:82cqw;overflow:hidden;writing-mode:vertical-rl}
+.cover-tpl-olive .cv-title{width:auto;max-height:62cqh;color:#f4ecd6;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.2em;max-width:88cqw;overflow:hidden;writing-mode:vertical-rl}
 .cover-tpl-pine{background:linear-gradient(170deg,#1d4436 0%,#143227 58%,#0b2219 100%)}
 .cover-tpl-pine::before{position:absolute;inset:8cqw;content:'';border:1px solid rgba(212,175,96,.6);border-radius:1cqw}
 .cover-tpl-pine::after{position:absolute;top:13cqw;left:13cqw;width:10cqw;height:10cqw;content:'';background:radial-gradient(circle at 50% 50%,rgba(212,175,96,.95) 0 30%,transparent 32%);border:1px solid rgba(212,175,96,.5);border-radius:50%}
-.cover-tpl-pine .cv-title{width:auto;max-height:62cqh;color:#f0e8d2;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.2em;max-width:82cqw;overflow:hidden;writing-mode:vertical-rl}
+.cover-tpl-pine .cv-title{width:auto;max-height:62cqh;color:#f0e8d2;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.2em;max-width:88cqw;overflow:hidden;writing-mode:vertical-rl}
 .cover-tpl-night{background:linear-gradient(170deg,#1c2a4d 0%,#131f3b 58%,#0b1428 100%)}
 .cover-tpl-night::before{position:absolute;inset:0;content:'';background:radial-gradient(circle at 76% 22%,rgba(214,226,255,.9) 0 1.2cqw,transparent 2cqw),radial-gradient(circle at 62% 38%,rgba(214,226,255,.65) 0 .9cqw,transparent 1.7cqw),radial-gradient(circle at 84% 48%,rgba(214,226,255,.75) 0 1cqw,transparent 1.8cqw),radial-gradient(circle at 24% 76%,rgba(214,226,255,.5) 0 .8cqw,transparent 1.6cqw),radial-gradient(circle at 70% 78%,rgba(214,226,255,.4) 0 .7cqw,transparent 1.5cqw),radial-gradient(circle at 32% 24%,rgba(214,226,255,.35) 0 .7cqw,transparent 1.5cqw)}
-.cover-tpl-night .cv-title{width:auto;max-height:64cqh;color:#e8eefc;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.22em;max-width:82cqw;overflow:hidden;writing-mode:vertical-rl}
+.cover-tpl-night .cv-title{width:auto;max-height:64cqh;color:#e8eefc;font-size:calc(15cqw * var(--cv-scale,1));letter-spacing:.22em;max-width:88cqw;overflow:hidden;writing-mode:vertical-rl}
 .bc-body{display:flex;min-width:0;flex:1;flex-direction:column;gap:5px}
 .bc-top{display:flex;align-items:center;gap:9px}
 .bc-top .bt{font-family:var(--font-serif);font-size:16px;font-weight:600}
@@ -1647,29 +1647,37 @@ function coverPaletteFor(title) {
   for (const ch of title) hash = (hash * 31 + ch.charCodeAt(0)) % 997;
   return COVER_PALETTES[hash % COVER_PALETTES.length];
 }
-const TITLE_MAX_CHARS = 16;
-function fitCoverTitle(title) {
-  const raw = title.trim() || '未命名作品';
-  const chars = [...raw];
-  return chars.length > TITLE_MAX_CHARS ? chars.slice(0, TITLE_MAX_CHARS).join('') + '…' : raw;
+function baseWidthFor(len) { return len <= 10 ? 2 : len <= 14 ? 3 : len <= 20 ? 4 : 5; }
+function estimatedScaleFor(len) {
+  if (len <= 10) return 1;
+  if (len <= 14) return 0.92;
+  if (len <= 18) return 0.86;
+  if (len <= 24) return 0.78;
+  if (len <= 32) return 0.68;
+  if (len <= 44) return 0.58;
+  if (len <= 60) return 0.5;
+  return 0.44;
 }
-function titleScaleFor(title) {
-  const len = [...fitCoverTitle(title)].length;
-  if (len <= 5) return 1;
-  if (len <= 8) return 0.84;
-  if (len <= 11) return 0.7;
-  if (len <= 14) return 0.58;
-  return 0.5;
+function fitOneCover(el) {
+  const title = el.querySelector('.cv-title');
+  if (!title) return;
+  const len = [...title.textContent].length;
+  el.style.setProperty('--cv-width', baseWidthFor(len) + 'em');
+  let s = estimatedScaleFor(len);
+  const fits = () => title.scrollHeight <= title.clientHeight + 1 && title.scrollWidth <= title.clientWidth + 1;
+  for (let i = 0; i < 18; i++) {
+    el.style.setProperty('--cv-scale', String(s));
+    if (fits()) break;
+    if (s <= 0.34) break;
+    s = Math.max(0.34, s * 0.9);
+  }
 }
 function applyCoverScales() {
-  document.querySelectorAll('.cover-art').forEach(el => {
-    const titleEl = el.querySelector('.cv-title');
-    if (titleEl) el.style.setProperty('--cv-scale', String(titleScaleFor(titleEl.textContent)));
-  });
+  document.querySelectorAll('.cover-art').forEach(fitOneCover);
 }
 function refreshCoverGallery() {
   const title = (document.getElementById('fTitle').value.trim()) || '未命名作品';
-  coverGallery.querySelectorAll('.cv-title').forEach(el => { el.textContent = fitCoverTitle(title); });
+  coverGallery.querySelectorAll('.cv-title').forEach(el => { el.textContent = title; });
   applyCoverScales();
   // 纯色板单元格的色板随书名联动
   const paletteCell = coverGallery.querySelector('[data-cover=""] .cover-art');
