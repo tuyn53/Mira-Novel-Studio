@@ -478,7 +478,20 @@ body:not(.in-book) .tb-book{display:none}
 .home-head .sub{margin-top:7px;color:var(--cp-text-tertiary);font-size:12.5px;font-variant-numeric:tabular-nums}
 .home-actions{display:flex;gap:9px}
 .home-actions .ghost-btn{height:32px;padding:0 12px;font-size:12px}
-.shelf{display:flex;flex-direction:column;gap:13px}
+.shelf{min-height:120px}
+.shelf[data-mode="grid"] .shelf-list{display:none}
+.shelf[data-mode="list"] .shelf-grid{display:none}
+.shelf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:18px 16px}
+.shelf-list{display:flex;flex-direction:column;gap:13px}
+.gcard{display:flex;flex-direction:column;gap:9px;padding:0;color:inherit;text-align:left;background:transparent;border:0;transition:transform .15s var(--ease-out)}
+.gcard:hover{transform:translateY(-3px)}
+.gcard:hover .gcard-cover{box-shadow:var(--shadow-md)}
+.gcard-cover{width:100%;aspect-ratio:3/4;border-radius:10px;box-shadow:var(--shadow-sm);transition:box-shadow .15s var(--ease-out)}
+.gcard-body{display:flex;flex-direction:column;gap:2px;padding:0 2px}
+.gcard-body strong{overflow:hidden;font-family:var(--font-serif);font-size:13.5px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+.gmeta{color:var(--cp-text-tertiary);font-size:11.5px;font-variant-numeric:tabular-nums}
+.gcard--new{display:grid;aspect-ratio:3/4;place-content:center;justify-items:center;gap:8px;color:var(--cp-text-tertiary);border:1.5px dashed var(--cp-border);border-radius:10px;font-size:12.5px}
+.gcard--new:hover{color:var(--cp-text);border-color:var(--cp-text-tertiary);transform:translateY(-3px)}
 .book-card{
   display:flex;gap:16px;width:100%;padding:16px;text-align:left;cursor:pointer;
   background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);
@@ -583,6 +596,60 @@ textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-heigh
 .drop span{font-size:11.5px}
 .init-actions{display:flex;align-items:center;gap:14px}
 .init-note{color:var(--cp-text-tertiary);font-size:11.5px}
+/* ---- 首次引导（3 步全屏） ---- */
+.v-welcome.on{display:grid;place-items:center;padding:40px 20px;background:var(--cp-bg)}
+.ob-card{display:flex;width:min(600px,94vw);min-height:440px;flex-direction:column;padding:22px 34px 26px;background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-md)}
+.ob-head{display:flex;align-items:center;justify-content:space-between}
+.ob-brand{display:inline-flex;gap:9px;align-items:center;color:var(--cp-text-secondary);font-size:12.5px;font-weight:600}
+.ob-mark{display:grid;width:22px;height:22px;place-items:center;color:#1f1f23;background:linear-gradient(135deg,#e3b341,#d98c00);border-radius:7px;font-size:12px;font-style:normal;font-weight:700}
+.ob-skip{padding:4px 8px;color:var(--cp-text-tertiary);background:none;border:0;border-radius:var(--radius-sm);font-size:12px}
+.ob-skip:hover{color:var(--cp-text);background:var(--cp-bg-hover)}
+.ob-dots{display:flex;gap:6px;justify-content:center;margin:18px 0 4px}
+.ob-dots i{width:6px;height:6px;background:var(--cp-border);border-radius:50%;transition:all .15s var(--ease-out)}
+.ob-dots i.on{width:18px;background:var(--cp-primary);border-radius:3px}
+.ob-body{display:flex;flex:1;flex-direction:column;padding-top:14px}
+.ob-body h1{font-size:22px;font-weight:600}
+.ob-desc{min-height:20px;margin:8px 0 22px;color:var(--cp-text-tertiary);font-size:13px;line-height:1.7}
+.ob-field{margin-bottom:18px}
+.ob-field label{display:block;margin-bottom:7px;color:var(--cp-text);font-size:12.5px;font-weight:500}
+.ob-hint{display:block;margin-top:6px;color:var(--cp-text-tertiary);font-size:11.5px}
+.ob-models{display:flex;flex-direction:column;gap:10px}
+.ob-modrow{display:flex;align-items:center;gap:14px;padding:11px 14px;background:var(--cp-bg);border:1px solid var(--cp-border-light);border-radius:var(--radius-md)}
+.ob-modinfo{min-width:0;flex:1}
+.ob-modinfo strong{display:block;font-size:13px}
+.ob-modinfo span{display:block;margin-top:2px;color:var(--cp-text-tertiary);font-size:11.5px}
+.ob-summary{padding:4px 2px}
+.ob-row{display:flex;align-items:baseline;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--cp-border-light)}
+.ob-row span{color:var(--cp-text-tertiary);font-size:12.5px}
+.ob-row b{font-size:13.5px;font-weight:600}
+.ob-foot{display:flex;align-items:center;padding-top:20px}
+.ob-foot .spacer{flex:1}
+/* ---- 首页问候与活动总览 ---- */
+.greet{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.greet h1{font-family:var(--font-serif);font-size:26px;font-weight:600}
+.greet-actions{display:flex;gap:6px;align-items:center;margin-left:auto}
+.overview{padding:18px 20px 14px;margin-bottom:30px;background:var(--cp-bg-elevated);border:1px solid var(--cp-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
+.tile{display:flex;flex-direction:column;gap:6px;padding:12px 14px;background:var(--cp-bg);border:1px solid var(--cp-border-light);border-radius:var(--radius-md)}
+.tile-label{color:var(--cp-text-tertiary);font-size:11.5px}
+.tile-value{color:var(--cp-text);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.heat{display:flex;gap:3px;padding:2px 0 4px;overflow:hidden}
+.heat-col{display:flex;flex-direction:column;gap:3px}
+.heat-cell{width:11px;height:11px;background:var(--cp-bg-hover);border-radius:3px}
+.heat-cell.lv-1{background:color-mix(in srgb,var(--cp-primary) 28%,var(--cp-bg-hover))}
+.heat-cell.lv-2{background:color-mix(in srgb,var(--cp-primary) 52%,var(--cp-bg-hover))}
+.heat-cell.lv-3{background:color-mix(in srgb,var(--cp-primary) 76%,var(--cp-bg-hover))}
+.heat-cell.lv-4{background:var(--cp-primary)}
+.heat-cell.ph{opacity:0}
+.overview-note{margin-top:8px;color:var(--cp-text-tertiary);font-size:12px}
+/* ---- 书架头与视图切换 ---- */
+.shelf-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.shelf-head h2{font-size:17px;font-weight:600}
+.shelf-sub{color:var(--cp-text-tertiary);font-size:12px;font-variant-numeric:tabular-nums}
+.shelf-head .spacer{flex:1}
+.view-toggle{display:flex;padding:3px;background:var(--cp-bg-hover);border-radius:8px}
+.view-toggle button{display:grid;width:28px;height:24px;place-items:center;color:var(--cp-text-tertiary);background:transparent;border:0;border-radius:6px}
+.view-toggle button.on{color:var(--cp-text);background:var(--cp-bg-elevated);box-shadow:var(--shadow-sm)}
 /* 标签搜索 / 折叠 */
 .tag-search{display:flex;align-items:center;gap:7px;height:34px;padding:0 12px;margin-bottom:14px;color:var(--cp-text-tertiary);background:var(--cp-bg-elevated);border:1px solid var(--cp-border);border-radius:var(--radius-md)}
 .tag-search input{flex:1;min-width:0;color:var(--cp-text);background:transparent;border:0;outline:0;font:inherit;font-size:12.5px}
@@ -636,20 +703,105 @@ textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-heigh
   <div class="stage">
 
     <!-- ================= 书架（选择项目） ================= -->
-    <section class="view v-home on" id="view-home">
+    <!-- ================= 首次引导（3 步全屏） ================= -->
+    <section class="view v-welcome on" id="view-welcome">
+      <div class="ob-card">
+        <header class="ob-head">
+          <span class="ob-brand"><i class="ob-mark">N</i>Mira Novel Studio</span>
+          <button class="ob-skip" id="btnSkipOnboarding" type="button">跳过引导</button>
+        </header>
+        <div class="ob-dots" aria-hidden="true"><i class="on" data-dot="1"></i><i data-dot="2"></i><i data-dot="3"></i></div>
+
+        <section class="ob-body" data-step="1">
+          <h1>先认识一下</h1>
+          <p class="ob-desc">AI 伴写时会用这个称呼你，首页也会这样问候你。</p>
+          <div class="ob-field"><label>作者笔名</label><input class="inp" id="obPen" value="南山客" maxlength="20" placeholder="例：南山客"></div>
+          <div class="ob-field"><label>AI 如何称呼你</label><input class="inp" id="obAddr" value="老师" maxlength="20" placeholder="例：老师 / 大大 / 笔名"><span class="ob-hint">留空则用笔名</span></div>
+        </section>
+
+        <section class="ob-body" data-step="2" style="display:none">
+          <h1>给每个环节分配模型</h1>
+          <p class="ob-desc">正文用强模型、摘要提取用轻模型；这些分配之后可以随时调整。</p>
+          <div class="ob-models">
+            <div class="ob-modrow"><div class="ob-modinfo"><strong>正文创作</strong><span>续写 / 扩写 / 对白 / 伴写对话</span></div><select class="inp" style="width:210px"><option>DeepSeek · V4</option><option>GLM · 5 Air</option><option>Claude · Sonnet</option></select></div>
+            <div class="ob-modrow"><div class="ob-modinfo"><strong>大纲与细纲</strong><span>总纲 / 卷纲 / 章纲</span></div><select class="inp" style="width:210px"><option>DeepSeek · V4</option><option>GLM · 5 Air</option><option>Claude · Sonnet</option></select></div>
+            <div class="ob-modrow"><div class="ob-modinfo"><strong>摘要与提取</strong><span>前情摘要 / 定稿摄取 / 批量优化</span></div><select class="inp" style="width:210px"><option>GLM · 5 Air</option><option>DeepSeek · V4</option><option>Claude · Sonnet</option></select></div>
+            <div class="ob-modrow"><div class="ob-modinfo"><strong>审校检查</strong><span>一致性检查（M2）</span></div><select class="inp" style="width:210px"><option>Claude · Sonnet</option><option>DeepSeek · V4</option><option>GLM · 5 Air</option></select></div>
+          </div>
+        </section>
+
+        <section class="ob-body" data-step="3" style="display:none">
+          <h1 id="obWelcomeTitle">欢迎，老师。</h1>
+          <p class="ob-desc">这些设置之后可以在首页右上角重新调整。</p>
+          <div class="ob-summary">
+            <div class="ob-row"><span>称呼</span><b id="obSummaryName">老师</b></div>
+            <div class="ob-row"><span>模型分配</span><b>4 / 4</b></div>
+          </div>
+        </section>
+
+        <footer class="ob-foot">
+          <button class="ghost-btn" id="btnObPrev" type="button" style="visibility:hidden">上一步</button>
+          <span class="spacer"></span>
+          <button class="primary-btn" id="btnObNext" type="button">下一步</button>
+        </footer>
+      </div>
+    </section>
+
+    <section class="view v-home" id="view-home">
       <div class="home-scroll">
         <div class="home-wrap">
-          <header class="home-head">
-            <div>
-              <h1>书架</h1>
-              <p class="sub">在写 2 · 完本 1 · 本周 8,412 字 · 连续更新 3 天</p>
-            </div>
-            <div class="home-actions">
-              <button class="ghost-btn" id="btnImportHome"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>导入 TXT / JSON</button>
-              <button class="primary-btn" id="btnNewBook"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建作品</button>
+          <header class="greet">
+            <h1>接下来写点什么，<span id="greetName">老师</span>？</h1>
+            <div class="greet-actions">
+              <button class="ghost-btn" id="btnContinue" data-open-book="deng">继续《提灯照河山》<svg class="ic sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+              <button class="icon-btn" id="btnHomeSettings" title="偏好设置" aria-label="偏好设置"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
             </div>
           </header>
-          <div class="shelf">
+
+          <section class="overview">
+            <div class="tiles">
+              <div class="tile"><span class="tile-label">累计字数</span><span class="tile-value">401 字</span></div>
+              <div class="tile"><span class="tile-label">今日字数</span><span class="tile-value">1,642 字</span></div>
+              <div class="tile"><span class="tile-label">写作天数</span><span class="tile-value">71 天</span></div>
+              <div class="tile"><span class="tile-label">连续写作</span><span class="tile-value">5 天</span></div>
+              <div class="tile"><span class="tile-label">高产时段</span><span class="tile-value">15:00</span></div>
+              <div class="tile"><span class="tile-label">常用模型</span><span class="tile-value">DeepSeek · V4</span></div>
+            </div>
+            <div class="heat" id="heat" aria-hidden="true"></div>
+            <p class="overview-note">累计 401 字，再写 12.6 万字就够一本《活着》</p>
+          </section>
+
+          <div class="shelf-head">
+            <h2>书架</h2>
+            <span class="shelf-sub">在写 1 · 本库共 401 字 · 本周 9,874 字</span>
+            <span class="spacer"></span>
+            <div class="view-toggle" id="shelfToggle" role="group" aria-label="书架视图">
+              <button class="on" data-view-mode="grid" aria-label="网格视图" title="网格视图"><svg class="ic sm" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+              <button data-view-mode="list" aria-label="列表视图" title="列表视图"><svg class="ic sm" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+            </div>
+            <button class="ghost-btn" id="btnImportHome"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>导入 TXT / JSON</button>
+            <button class="primary-btn" id="btnNewBook"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建作品</button>
+          </div>
+          <div class="shelf" id="shelf" data-mode="grid">
+            <div class="shelf-grid">
+              <button class="gcard" data-open-book="deng">
+                <span class="cover-art cover-palette-0 cover-tpl-ink gcard-cover"><i class="cv-title">提灯照河山</i></span>
+                <span class="gcard-body"><strong>提灯照河山</strong><span class="gmeta">401 字 · 连载中</span></span>
+              </button>
+              <button class="gcard" data-open-book="wu">
+                <span class="cover-art cover-palette-1 cover-tpl-night gcard-cover"><i class="cv-title">雾起长安</i></span>
+                <span class="gcard-body"><strong>雾起长安</strong><span class="gmeta">0 字 · 大纲阶段</span></span>
+              </button>
+              <button class="gcard" data-open-book="chun">
+                <span class="cover-art cover-palette-2 cover-tpl-peach gcard-cover"><i class="cv-title">春窗灯影录</i></span>
+                <span class="gcard-body"><strong>春窗灯影录</strong><span class="gmeta">42.3 万字 · 已完本</span></span>
+              </button>
+              <button class="gcard gcard--new" id="btnNewBookGrid">
+                <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                <span>新建作品</span>
+              </button>
+            </div>
+            <div class="shelf-list">
             <button class="book-card" data-open-book="deng">
               <span class="cover cover-art cover-palette-0 cover-tpl-ink"><i class="cv-title">提灯照河山</i></span>
               <span class="bc-body">
@@ -683,6 +835,7 @@ textarea.inp{height:auto;min-height:62px;padding:9px 12px;resize:none;line-heigh
             <button class="book-card new" id="btnNewBookShelf">
               <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>从模板或空白开一本新书
             </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1227,6 +1380,70 @@ document.getElementById('initModes').addEventListener('click', e => {
   document.getElementById('pane-fields').style.display = btn.dataset.mode === 'import' ? 'none' : '';
   document.getElementById('pane-cover').style.display = btn.dataset.mode === 'import' ? 'none' : '';
 });
+// ---------- 首次引导（3 步全屏） ----------
+let obStep = 1;
+function renderOb(){
+  document.querySelectorAll('.ob-body').forEach(el => { el.style.display = Number(el.dataset.step) === obStep ? '' : 'none'; });
+  document.querySelectorAll('.ob-dots i').forEach(el => el.classList.toggle('on', Number(el.dataset.dot) === obStep));
+  document.getElementById('btnObPrev').style.visibility = obStep > 1 ? 'visible' : 'hidden';
+  document.getElementById('btnObNext').textContent = obStep === 3 ? '开始创作' : '下一步';
+}
+function obName(){
+  return (document.getElementById('obAddr').value.trim()) || (document.getElementById('obPen').value.trim()) || '老师';
+}
+function syncObSummary(){
+  const name = obName();
+  document.getElementById('obWelcomeTitle').textContent = `欢迎，${name}。`;
+  document.getElementById('obSummaryName').textContent = name;
+}
+document.getElementById('btnObNext').addEventListener('click', () => {
+  if (obStep < 3) { obStep++; renderOb(); if (obStep === 3) syncObSummary(); return; }
+  document.getElementById('greetName').textContent = obName();
+  showView('view-home');
+});
+document.getElementById('btnObPrev').addEventListener('click', () => { if (obStep > 1) { obStep--; renderOb(); } });
+document.getElementById('btnSkipOnboarding').addEventListener('click', () => showView('view-home'));
+document.getElementById('btnHomeSettings').addEventListener('click', () => { obStep = 1; renderOb(); showView('view-welcome'); });
+renderOb();
+
+// ---------- 首页：活动总览热力图（15 周，确定性演示） + 书架视图切换 ----------
+(function buildHeat(){
+  const heat = document.getElementById('heat');
+  if (!heat || heat.dataset.built) return;
+  heat.dataset.built = '1';
+  let seed = 20261009;
+  const rand = () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const today = new Date();
+  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const lastSunday = new Date(end.getTime() - end.getDay() * 86400000);
+  const firstSunday = new Date(lastSunday.getTime() - 14 * 7 * 86400000);
+  for (let w = 0; w < 15; w++) {
+    const col = document.createElement('div'); col.className = 'heat-col';
+    for (let d = 0; d < 7; d++) {
+      const date = new Date(firstSunday.getTime() + (w * 7 + d) * 86400000);
+      const cell = document.createElement('i'); cell.className = 'heat-cell';
+      if (date > end) { cell.classList.add('ph'); }
+      else {
+        const r = rand();
+        const lv = r < 0.35 ? 0 : r < 0.6 ? 1 : r < 0.8 ? 2 : r < 0.93 ? 3 : 4;
+        cell.classList.add('lv-' + lv);
+        cell.title = `${date.getMonth() + 1}月${date.getDate()}日`;
+      }
+      col.appendChild(cell);
+    }
+    heat.appendChild(col);
+  }
+})();
+
+const shelfEl = document.getElementById('shelf');
+document.getElementById('shelfToggle').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-view-mode]');
+  if (!btn || !shelfEl) return;
+  document.querySelectorAll('#shelfToggle button').forEach(b => b.classList.toggle('on', b === btn));
+  shelfEl.dataset.mode = btn.dataset.viewMode;
+});
+document.getElementById('btnNewBookGrid').addEventListener('click', () => showView('view-init'));
+
 // ---------- 开书选题：频道 → 主分类 → 标签组（全量转载番茄标签库，原始快照 docs/reference/fanqie-taxonomy.json） ----------
 const TAXONOMY = {
   categories: {

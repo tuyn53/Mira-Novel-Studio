@@ -7,7 +7,8 @@
 import type { NovelProjectDocumentV2, NovelProjectSummary, Scene } from '@/domain/model'
 import { countProjectWords } from '@/domain/model'
 import { defaultCover } from '@/domain/cover'
-import type { CreateProjectInput, PlatformApi, SnapshotInput, StudioPreferences } from './types'
+import { computeStreak, toDateKey } from '@/domain/stats'
+import type { CreateProjectInput, DailyWords, ModelOption, PlatformApi, SnapshotInput, StudioPreferences, WorkspaceStats } from './types'
 
 const PREFS_KEY = 'mns.mock.preferences'
 
@@ -269,6 +270,41 @@ function readPrefs(): StudioPreferences {
   return { theme: 'system' }
 }
 
+// ---- 工作区统计（演示数据：确定性伪随机，保证刷新后热力图稳定） ----
+
+/** mulberry32：定种子伪随机，用于生成可信但稳定的演示写作量 */
+function mulberry32(seed: number): () => number {
+  let a = seed
+  return () => {
+    a |= 0
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function buildDemoDaily(days = 120): DailyWords[] {
+  const rand = mulberry32(20261009)
+  const out: DailyWords[] = []
+  const today = new Date()
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i)
+    const roll = rand()
+    // 6 成日子有产出；最近 3 天强制有产出（演示连续写作）
+    const writing = roll > 0.4 || i < 3
+    const words = writing ? Math.round(400 + rand() * 3600) : 0
+    out.push({ date: toDateKey(date), words })
+  }
+  return out
+}
+
+let demoDailyCache: DailyWords[] | undefined
+function demoDaily(): DailyWords[] {
+  demoDailyCache ??= buildDemoDaily()
+  return demoDailyCache
+}
+
 /** Mock 快照存储（会话内存，真实持久化在宿主 snapshots 表） */
 const mockSnapshots: Array<SnapshotInput & { id: string; createdAt: number }> = []
 
@@ -389,6 +425,41 @@ export const mockPlatform: PlatformApi = {
     const id = newId('snap')
     mockSnapshots.push({ id, ...input, createdAt: Date.now() })
     return { id }
+  },
+
+  async listModels(): Promise<ModelOption[]> {
+    // 演示模型（真实宿主来自 Harness 统一模型配置）
+    return [
+      { id: 'deepseek-v4', label: 'DeepSeek · V4', note: '创作主力' },
+      { id: 'glm-5-air', label: 'GLM · 5 Air', note: '轻量快速' },
+      { id: 'claude-sonnet', label: 'Claude · Sonnet', note: '长文审校' },
+    ]
+  },
+
+  async getWorkspaceStats(): Promise<WorkspaceStats> {
+    ensureSeeded()
+    const projects = [...mockProjects.values()]
+    const totalWords = projects.reduce((sum, project) => sum + countProjectWords(project), 0)
+    const chaptersDone = projects.reduce(
+      (sum, project) => sum + project.volumes.flatMap(volume => volume.chapters).filter(chapter => chapter.status === 'done').length,
+      0,
+    )
+    const daily = demoDaily()
+    const todayKey = toDateKey(new Date())
+    const weekAgo = toDateKey(new Date(Date.now() - 6 * 86_400_000))
+    const wordsToday = daily.find(item => item.date === todayKey)?.words ?? 0
+    const wordsThisWeek = daily.filter(item => item.date >= weekAgo).reduce((sum, item) => sum + item.words, 0)
+    return {
+      totalWords,
+      wordsToday,
+      wordsThisWeek,
+      activeDays: daily.filter(item => item.words > 0).length,
+      streakDays: computeStreak(daily),
+      chaptersDone,
+      peakHour: 15,
+      favoriteModel: 'deepseek-v4',
+      daily,
+    }
   },
 
   async getPreferences() {

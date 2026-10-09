@@ -8,6 +8,6 @@ import { useWorkspaceStore } from '@/stores/workspace'
 
 const workspace = useWorkspaceStore()
 onMounted(() => {
-  void workspace.initTheme()
+  void workspace.ensurePrefs()
 })
 </script>

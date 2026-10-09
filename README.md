@@ -39,7 +39,7 @@ src/
 │  ├─ write/               写作区组件：WriteEditor（Milkdown 富文本 + 纯文本）、AiPanel（多候选）
 │  └─ ThemeToggle.vue
 ├─ router/            hash 路由：书架 → 向导 → /book/:id/:section
-├─ views/             书架、开书向导（选题 + 封面）、工作台（写作/编排/设定/审阅）
+├─ views/             首页（活动总览 + 书架双视图）、首次引导（笔名/模型分配/欢迎）、开书向导（选题 + 封面）、工作台（写作/编排/设定/审阅）
 ├─ locale/zh-CN.ts    文案集中（首版仅中文）
 └─ styles/            tokens.scss（书卷暖色）+ covers.scss（封面调色板）+ base.scss
 ```

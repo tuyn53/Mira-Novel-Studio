@@ -10,6 +10,8 @@ export interface CoWriteRunInput {
   action: CoWriteAction
   selection?: string
   custom?: string
+  /** 按模块路由选出的模型 */
+  modelId?: string
   count?: number
 }
 
@@ -42,6 +44,7 @@ export const useCoWriterStore = defineStore('coWriter', () => {
         action: input.action,
         selection: input.selection,
         custom: input.custom,
+        modelId: input.modelId,
         count: input.count ?? 2,
         signal: controller.signal,
         onUpdate: next => { candidates.value = next },

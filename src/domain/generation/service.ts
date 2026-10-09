@@ -10,7 +10,7 @@ import type { NovelProjectDocumentV2, Scene } from '../model'
 
 /** 最小流式接口（platform.streamGeneration 的收窄视图，避免领域层依赖平台层） */
 export type StreamFn = (
-  request: { role: 'authoring' | 'automation'; system?: string; prompt: string },
+  request: { role: 'authoring' | 'automation'; system?: string; prompt: string; modelId?: string },
   onChunk: (chunk: string) => void,
   signal?: AbortSignal,
 ) => Promise<string>
@@ -97,6 +97,8 @@ export interface RunCandidatesDeps {
   action: CoWriteAction
   selection?: string
   custom?: string
+  /** 按模块路由选出的模型（首次引导/设置中的分配） */
+  modelId?: string
   /** 候选数量，默认 2（并排对比） */
   count?: number
   signal?: AbortSignal
@@ -120,12 +122,15 @@ export async function runCandidates(deps: RunCandidatesDeps): Promise<Candidate[
     candidates.map(async (candidate, index) => {
       try {
         await deps.stream(
-          composeRequest(deps.project, deps.scene, deps.action, {
-            selection: deps.selection,
-            custom: deps.custom,
-            variant: index + 1,
-            variantCount: count,
-          }),
+          {
+            ...composeRequest(deps.project, deps.scene, deps.action, {
+              selection: deps.selection,
+              custom: deps.custom,
+              variant: index + 1,
+              variantCount: count,
+            }),
+            modelId: deps.modelId,
+          },
           chunk => {
             candidate.text += chunk
             deps.onUpdate(snapshot())

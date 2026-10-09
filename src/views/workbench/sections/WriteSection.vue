@@ -249,6 +249,8 @@ async function startRun(action: CoWriteAction, selection?: string, custom?: stri
     action,
     selection,
     custom,
+    // 模型按模块路由（首次引导/设置中的「正文创作」分配）
+    modelId: workspace.modelIdFor('authoring'),
   })
 }
 
