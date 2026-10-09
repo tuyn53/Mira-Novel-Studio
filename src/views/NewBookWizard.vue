@@ -69,12 +69,12 @@
             </button>
           </div>
           <button
-            v-if="!tagQuery && group.tags.length > groupVisibleTags(group).length"
+            v-if="!tagQuery && (isGroupExpanded(group.key) || group.tags.length > groupVisibleTags(group).length)"
             class="tag-more"
             type="button"
             @click="toggleGroupExpand(group.key)"
           >
-            {{ expandedGroups.includes(group.key) ? '收起' : `展开全部（共 ${group.tags.length} 个）` }}
+            {{ isGroupExpanded(group.key) ? '收起' : `展开全部（共 ${group.tags.length} 个）` }}
           </button>
         </div>
       </div>
@@ -116,12 +116,6 @@
           <label>{{ t.wizard.fieldPov }}</label>
           <el-select v-model="form.pov">
             <el-option v-for="option in pows" :key="option" :label="option" :value="option" />
-          </el-select>
-        </div>
-        <div class="f">
-          <label>{{ t.wizard.fieldModel }}</label>
-          <el-select model-value="host" disabled>
-            <el-option label="跟随宿主模型配置（Harness 统一管理）" value="host" />
           </el-select>
         </div>
       </div>
@@ -218,6 +212,10 @@ function toggleGroupExpand(key: string) {
   expandedGroups.value = expandedGroups.value.includes(key)
     ? expandedGroups.value.filter(item => item !== key)
     : [...expandedGroups.value, key]
+}
+
+function isGroupExpanded(key: string) {
+  return expandedGroups.value.includes(key)
 }
 
 function selectChannel(channel: Channel) {

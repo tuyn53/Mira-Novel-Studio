@@ -19,8 +19,10 @@
   .cv-title {
     z-index: 2;
     width: 2em;
+    max-height: 90cqh;
+    overflow: hidden;
     font-family: var(--font-serif);
-    font-size: 15cqw;
+    font-size: calc(15cqw * var(--cv-scale, 1));
     font-style: normal;
     font-weight: 600;
     line-height: 1.5;
@@ -61,9 +63,11 @@
     width: auto;
     max-height: 66cqh;
     color: #2b303a;
-    font-size: 16cqw;
+    font-size: calc(16cqw * var(--cv-scale, 1));
     letter-spacing: 0.18em;
     text-shadow: none;
+    max-width: 82cqw;
+    overflow: hidden;
     writing-mode: vertical-rl;
   }
 }
@@ -97,9 +101,11 @@
     width: auto;
     max-height: 64cqh;
     color: #6b4f14;
-    font-size: 15cqw;
+    font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.16em;
     text-shadow: none;
+    max-width: 82cqw;
+    overflow: hidden;
     writing-mode: vertical-rl;
   }
 }
@@ -134,9 +140,11 @@
     width: auto;
     max-height: 62cqh;
     color: #23272e;
-    font-size: 14cqw;
+    font-size: calc(14cqw * var(--cv-scale, 1));
     letter-spacing: 0.3em;
     text-shadow: none;
+    max-width: 82cqw;
+    overflow: hidden;
     writing-mode: vertical-rl;
   }
 }
@@ -159,9 +167,11 @@
     width: auto;
     max-height: 64cqh;
     color: #1f4d38;
-    font-size: 15cqw;
+    font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.2em;
     text-shadow: none;
+    max-width: 82cqw;
+    overflow: hidden;
     writing-mode: vertical-rl;
   }
 }
@@ -185,9 +195,11 @@
     width: auto;
     max-height: 62cqh;
     color: #a3415c;
-    font-size: 15cqw;
+    font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.22em;
     text-shadow: none;
+    max-width: 82cqw;
+    overflow: hidden;
     writing-mode: vertical-rl;
   }
 }
@@ -210,8 +222,10 @@
     width: auto;
     max-height: 64cqh;
     color: #fbeef1;
-    font-size: 15cqw;
+    font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.2em;
+    max-width: 82cqw;
+    overflow: hidden;
     writing-mode: vertical-rl;
   }
 }
@@ -246,8 +260,10 @@
     width: auto;
     max-height: 62cqh;
     color: #f4ecd6;
-    font-size: 15cqw;
+    font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.2em;
+    max-width: 82cqw;
+    overflow: hidden;
     writing-mode: vertical-rl;
   }
 }
@@ -280,8 +296,10 @@
     width: auto;
     max-height: 62cqh;
     color: #f0e8d2;
-    font-size: 15cqw;
+    font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.2em;
+    max-width: 82cqw;
+    overflow: hidden;
     writing-mode: vertical-rl;
   }
 }
@@ -307,8 +325,10 @@
     width: auto;
     max-height: 64cqh;
     color: #e8eefc;
-    font-size: 15cqw;
+    font-size: calc(15cqw * var(--cv-scale, 1));
     letter-spacing: 0.22em;
+    max-width: 82cqw;
+    overflow: hidden;
     writing-mode: vertical-rl;
   }
 }
