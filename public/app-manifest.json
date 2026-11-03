@@ -1,0 +1,10 @@
+{
+  "manifestVersion": 1,
+  "id": "mira-novel-studio",
+  "name": "Mira Novel Studio",
+  "version": "0.2.0",
+  "entry": "index.html",
+  "minShellVersion": "0.1.0-beta.1",
+  "platformApi": { "major": 1, "minor": 0 },
+  "requiredCapabilities": ["models:text.generate", "storage:novel-projects"]
+}

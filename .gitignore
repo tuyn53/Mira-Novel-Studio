@@ -5,3 +5,8 @@ dist/
 .DS_Store
 .idea/
 .vscode/
+.impeccable/build/
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/tmp/
+.impeccable/questions/

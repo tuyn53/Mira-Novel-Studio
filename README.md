@@ -1,60 +1,56 @@
 # Mira Novel Studio
 
-AI 长篇小说创作工作台 —— Mira 宿主（[Mira-Harness](../Mira-Harness)）的 wujie 微应用，**纯渲染层**：无 Electron、无 node 运行时依赖，数据与模型能力全部经平台 API 归宿主持有。
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-- 设计方案：[docs/设计方案-现状对标与蓝图.md](docs/设计方案-现状对标与蓝图.md)
-- 技术选型定案：[docs/技术选型-定案.md](docs/技术选型-定案.md)
-- 交互原型（视觉与交互规格）：[prototype/index.html](prototype/index.html)（浏览器直接打开）
+面向 Mira App 的作者主导型小说创作工作台。新版采用“文学期刊编辑部”界面：鼠尾草导航、白色稿件、墨绿操作、细线分栏。作品从想法、蓝图、章节规划进入正文；AI 只提交建议，作者审阅后落稿，确认的章节摘要再服务后续创作。
 
-## 快速开始
+**当前状态（2026-11-03）：页面与交互原型已重建；尚不能在当前 Mira 中真实创作。** Mira-Harness 当前源码已删除旧小说模块，尚未开放独立应用的作品存储与文本生成 API，也未登记 Novel Studio。Studio 内的接入适配属于待宿主实现的草案，不能等同于已安装、已接通。未修改 Mira-Harness。
 
-```bash
-npm install
-npm run dev          # http://localhost:5180 —— 以 Mock 平台数据独立运行
-npm run typecheck    # vue-tsc + node 配置
-npm test             # vitest（领域模块）
-npm run build        # 产物 dist/，相对路径，供宿主 wujie 装载
-```
+## 本地浏览
 
-CI 门禁即上述三条命令（`.github/workflows/ci.yml`）。
+Node.js 22 或更高版本。
 
-## 目录结构
+    git clone https://github.com/tuyn53/Mira-Novel-Studio.git
+    cd Mira-Novel-Studio
+    npm ci
+    npm run dev
+    # http://127.0.0.1:5180/
+    npm run dev:prototype
+    # 同一个应用的 /prototype/index.html，始终强制浏览模式
 
-```
-src/
-├─ domain/            纯 TS 领域模块（无 DOM，vitest 覆盖）
-│  ├─ model.ts             数据契约 v2：卷→章→场景 + 实体库 + 封面 + 快照（宿主共同契约）
-│  ├─ cover.ts             封面：色板哈希 + 9 套模板封面清单（对标番茄模板封面）
-│  ├─ taxonomy.ts          开书选题：频道 → 主分类 → 标签组（470 个标签全量转载番茄，数据见 taxonomy-data.ts）
-│  ├─ context/             上下文组装器：分层优先级 + token 预算裁剪
-│  ├─ generation/          伴写生成服务：prompt 组装（复用上下文分层）+ 多候选并行
-│  ├─ review/              审阅 diff：段落级对齐（M2 审阅流基础）
-│  └─ ingest/              定稿摄取提案（M3，契约先行）
-├─ platform/          平台边界
-│  ├─ types.ts             PlatformApi 契约（宿主 preload 注入 window.__MIRA_PLATFORM__）
-│  ├─ mock.ts              Mock 实现（种子项目《提灯照河山》+ 演示范文库，脱离宿主可跑）
-│  └─ wujie.ts             wujie 生命周期（零改造 + unmount 清理）
-├─ stores/            Pinia：书架 / 当前作品 / 主题 / 伴写会话
-├─ components/
-│  ├─ write/               写作区组件：WriteEditor（Milkdown 富文本 + 纯文本）、AiPanel（多候选）
-│  └─ ThemeToggle.vue
-├─ router/            hash 路由：书架 → 向导 → /book/:id/:section
-├─ views/             首页（活动总览 + 书架双视图）、首次引导（笔名/模型分配/欢迎）、开书向导（选题 + 封面）、工作台（写作/编排/设定/审阅）
-├─ locale/zh-CN.ts    文案集中（首版仅中文）
-└─ styles/            tokens.scss（书卷暖色）+ covers.scss（封面调色板）+ base.scss
-```
+本地只能浏览示例。搜索、分类、选章、查看章纲、专注阅读及审阅对比可操作；作品编辑、创建、保存、AI 生成、采纳和模型配置保存均关闭。没有 localStorage 数据库、浏览器模型代理或假保存。示例《雾港来信》《春山不必等》为界面演示内容。
 
-## 与宿主的边界
+## 文档
 
-| 归宿主（Mira-Harness） | 归本仓库 |
-|---|---|
-| SQLite v2 分表 + 迁移器 + FTS5 | 四个工作区 UI、书架、向导 |
-| 模型 SSE 代理与密钥 | 上下文组装器、生成编排 |
-| 平台 API 桥（preload/IPC） | prompt 组装、diff 计算 |
-| wujie Shell、应用注册 | Studio 内部导航 |
+- [产品与创作流程](docs/产品与创作流程.md)：阶段、输入、输出、作者确认点和本版范围。
+- [Mira 接入边界](docs/Mira接入边界.md)：当前源码事实、拟议接口、数据所有权与接入缺口。
+- [开源对标](docs/开源对标.md)：四个项目的流程机制与本版取舍，固定到调研提交。
+- [原型与验收](docs/原型与验收.md)：页面入口、浏览约束、验证方法和未完成的宿主验收。
+- [PRODUCT.md](PRODUCT.md) / [DESIGN.md](DESIGN.md)：产品约束和已实现的视觉系统。
 
-新平台能力：先在 `src/platform/types.ts` 定契约（宿主实现 + Mock 同步补齐），UI 不绕过此层。
+## 代码边界
 
-## 里程碑
+    src/domain/       Studio v1 草案文档、上下文、提案应用、段落对比
+    src/platform/     iframe MessagePort 客户端与明确标注的只读示例
+    src/stores/       作品状态、串行保存、生成→提案→确认的业务流程
+    src/views/        作品、开书、蓝图、规划、正文、设定、审阅、连接设置
+    src/components/   应用框架、伴写面板、本地图标子集
+    src/styles/       桌面布局与宿主主题适配
+    prototype/        共享真实页面的强制浏览入口
+    public/           草案应用清单、字体及许可证
 
-M1 结构与编辑器（Milkdown、快照）→ M2 设定库与上下文引擎（审阅 diff 流）→ M3 记忆回灌与生成增强（多候选、一致性检查）→ M4 闭环（模板库、导入导出 EPUB）。详见设计方案文档 §4.8。
+宿主负责模型凭据、授权、持久化和执行运行时；Studio 负责小说业务、上下文和作者交互。禁止导入 Harness 内部驱动、数据库或 Agent 模块。高级检索、跨设备同步、自动连续生成、流式取消、快照历史和导出均未在本版实现。
+
+## 检查与构建
+
+    npm run typecheck
+    npm test
+    npm run build
+
+开发服务器运行时，可另开终端执行 npm run test:browser。首次使用先运行 npx playwright install chromium；也可通过 PLAYWRIGHT_CHROMIUM_EXECUTABLE 指定本机 Chrome 路径。STUDIO_URL 可指定构建预览地址。测试宿主只存在于 tests/browser.mjs，不会打包进应用。
+
+构建生成相对资源路径的静态页面。public/app-manifest.json 只是拟议应用包声明，不会注册宿主或赋予能力。宿主支持相应 SDK、完成白名单登记和安装器联调后，才可进行真实 Mira 验收。浏览器模拟宿主测试只能验证 Studio 逻辑，不证明 Electron、实际存储、安装或供应商模型可用。
+
+## 许可证
+
+项目代码采用 [MIT License](LICENSE)。随附 Noto Serif SC 字体保留 [SIL Open Font License](public/fonts/OFL.txt)，Lucide 图标保留其 [ISC 与 Feather 许可声明](public/licenses/lucide.txt)；第三方资产按各自许可分发。

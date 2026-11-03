@@ -1,7 +1,4 @@
-// ============================================================
-// 审阅 Diff —— 段落级对齐（M2 审阅流的基础；选型 §0：diff 用宿主已有的 jsdiff，
-// 本模块先实现段落对齐算法本身，字符级高亮在 UI 层用 jsdiff diffChars 补充）
-// ============================================================
+// Paragraph alignment for author-reviewed proposals.
 
 /** 按空行切段（段内单换行是软换行，保留在段内） */
 export function splitParagraphs(text: string): string[] {
